@@ -10,14 +10,14 @@ vi.mock("cloudflare:workers", () => ({
 }));
 vi.mock("./db");
 vi.mock("./turn");
-vi.mock("./twilio");
+vi.mock("./whatsapp");
 
 import type { Channel, InboundMessage } from "./channel";
 import * as db from "./db";
 import { runTurn } from "./turn";
 import type { Env } from "./types";
 import { BURST_DEBOUNCE_MS, MAX_TURN_ATTEMPTS, UserTurn } from "./user-turn";
-import { twilioChannel } from "./twilio";
+import { whatsAppChannel } from "./whatsapp";
 
 const PHONE = "447700900000";
 const NOW = Date.parse("2026-11-11T12:00:00Z");
@@ -69,7 +69,7 @@ describe("UserTurn", () => {
       pendingIds = pendingIds.filter((id) => !ids.includes(id));
     });
     vi.mocked(db.messagesAfter).mockResolvedValue([]);
-    vi.mocked(twilioChannel).mockReturnValue({ send: async (_to, text) => void sent.push(text) });
+    vi.mocked(whatsAppChannel).mockReturnValue({ send: async (_to, text) => void sent.push(text) });
     vi.mocked(runTurn).mockImplementation(async (_env, channel: Channel) => {
       await channel.send(PHONE, "reply");
       pendingIds = [];

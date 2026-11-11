@@ -1,12 +1,12 @@
 export interface Env {
   DB: D1Database;
   USER_TURN: DurableObjectNamespace;
+  WHATSAPP_PHONE_NUMBER_ID: string;
   ANTHROPIC_API_KEY?: string;
   ANTHROPIC_BASE_URL?: string;
-  TWILIO_ACCOUNT_SID?: string;
-  TWILIO_AUTH_TOKEN?: string;
-  TWILIO_WHATSAPP_FROM?: string;
-  PUBLIC_BASE_URL?: string;
+  WHATSAPP_ACCESS_TOKEN?: string;
+  WHATSAPP_APP_SECRET?: string;
+  WHATSAPP_VERIFY_TOKEN?: string;
   WEB_CHAT_DEV_ORIGIN?: string;
 }
 
