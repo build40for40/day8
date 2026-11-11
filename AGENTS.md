@@ -80,4 +80,5 @@ From the repo root:
 - `npm run dev:web` serves the landing page on port 4318.
 - `npm test` and `npm run typecheck` before you commit. Tests sit next to the file they cover.
 - Run wrangler from `apps/agent` as `npm run wrangler -- <args>`, never bare `npx wrangler`.
+- CI and deploys are one workflow, `.github/workflows/ci.yml`. Every pull request and push to `main` runs typecheck and tests on Node 22, and `main` requires that `test` check before a merge. A push to `main` that touches `apps/agent`, `docs/agent-prompt.md`, the root `package.json` or lockfile, or the workflow then applies the remote D1 migrations and deploys the Worker, one deploy at a time. It signs in with the org's `CLOUDFLARE_API_TOKEN` secret and sets the Worker's `ANTHROPIC_API_KEY` from the org secret on every deploy. The WhatsApp secrets are set by hand with `npm run wrangler -- secret put <NAME>` and survive deploys. To deploy without a code change, run the CI workflow by hand on `main`.
 - If the migration file changes before the first deploy, delete `apps/agent/.wrangler/state` and run `npm run db:migrate` again.
