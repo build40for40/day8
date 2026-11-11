@@ -4,6 +4,7 @@ Day 8 of 40 for 40, built live on Twitch on Wednesday 11 November 2026. The prob
 
 - **Form factor:** WhatsApp or iMessage.
 - **Name:** Handup, served at `build40for40.com/handup/` once it has a web-facing part.
+- **Landing page:** `landing/index.html` is the draft page: one file, a WhatsApp chat in a phone that plays out as you scroll, from being laid off to the list, the message to paste and a friend's offer ticked off. The conversation is the plain text block near the bottom of the file, one line per message. The look is the Creation of Adam: fresco plaster, and on wide screens the two reaching hands (`landing/hand-adam.jpg`, `landing/hand-god.jpg`, cropped from the public-domain fresco) sit either side of the phone. Set `WHATSAPP` in the script to Handup's number once there is one. It isn't served anywhere yet.
 
 Shared 40 for 40 context lives in `../AGENTS.md`.
 
@@ -13,7 +14,7 @@ Yesterday, while we were building Poppy, my wife called me unexpectedly. The ent
 
 ## Direction
 
-Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think a laptop, Wi-Fi, a desk to work from, or a month of a subscription paid for. No money changes hands through Handup, so no pooled funds, donations or payments.
+Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think a laptop, Wi-Fi, a desk to work from, or a month of a subscription paid for. Help in kind comes first, because that's the spirit of it. Money is allowed as a second or third choice: if a friend says "I haven't got a spare laptop, but here's £500 to buy one", that's fine and the item counts as sorted. Handup never holds or moves money itself, so the cash goes straight between the friend and the person, with no pooled funds and no payments through Handup.
 
 **Who it's for:** mid-career people with real outgoings (a mortgage, kids) who are new to AI, from the day they're laid off to about two weeks later. That's when they're in shock and need practical help fast, like cutting outgoings and keeping a laptop and a place to work.
 
