@@ -4,7 +4,7 @@ Day 8 of 40 for 40, built live on Twitch on Wednesday 11 November 2026. The prob
 
 - **Form factor:** WhatsApp or iMessage.
 - **Name:** Handup, served at `build40for40.com/handup/` once it has a web-facing part.
-- **Landing page:** `landing/index.html` is the draft page: one file, a WhatsApp chat in a phone that plays out as you scroll, from being laid off to the list, the message to paste and a friend's offer ticked off, in the agent's real message shapes from `docs/agent-prompt.md`. The conversation is the plain text block near the bottom of the file, one line per message. The look is the Creation of Adam: fresco plaster, and on wide screens the two reaching hands (`landing/hand-adam.jpg`, `landing/hand-god.jpg`, cropped from the public-domain fresco) sit either side of the phone. A small toggle in the phone switches to a second look, Maradona's 1986 hand of God: sky-blue and white stripes, a pitch, and drawn hands (no photo, as the famous one is copyrighted). `?look=86` opens it directly. Set `WHATSAPP` in the script to Handup's number once there is one. It isn't served anywhere yet.
+- **Landing page:** `apps/web/index.html` is the draft page: one file, a WhatsApp chat in a phone that plays out as you scroll, from being laid off to the list, the message to paste and a friend's offer ticked off, in the agent's real message shapes from `docs/agent-prompt.md`. The conversation is the plain text block near the bottom of the file, one line per message. The look is the Creation of Adam: fresco plaster, and on wide screens the two reaching hands (`apps/web/hand-adam.jpg`, `apps/web/hand-god.jpg`, cropped from the public-domain fresco) sit either side of the phone. A small toggle in the phone switches to a second look, Maradona's 1986 hand of God: sky-blue and white stripes, a pitch, and drawn hands (no photo, as the famous one is copyrighted). `?look=86` opens it directly. Set `WHATSAPP` in the script to Handup's number once there is one. It isn't served anywhere yet.
 
 Shared 40 for 40 context lives in `../AGENTS.md`.
 
@@ -30,7 +30,7 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 - Users are identified by phone number.
 - Store each user's conversation, profile and list, plus the system prompt with the starter pack.
 - Keep memory simple, such as one file per user that gets compacted. Smarter long-term memory can come later.
-- A provider's agent development kit (ADK) might host the agent and its long-term memory. That's still being researched.
+- No agent kit. The agent runs in our own Cloudflare Worker (see How the agent is built).
 
 **Open question: WhatsApp or iMessage.** WhatsApp can't post into existing groups, and nobody wants another Meta approval process. iMessage looks easier but is less documented.
 
@@ -38,7 +38,46 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 
 ## The agent
 
-The agent's aim, the user story and the draft system prompt are in `docs/agent-prompt.md`. The prompt names no tools yet, because the ADK is not chosen.
+The agent's aim, the user story and the system prompt are in `docs/agent-prompt.md`. The Worker reads the prompt and the starter list of ten straight from that file, so edit them there.
 
-- `docs/agent-needs.md`: what the agent needs from scaffolding (the block that goes in with every message, the actions she takes on the list, the shape of her reply).
+- `docs/agent-needs.md`: what the agent needs from scaffolding (the block that goes in with every message, the actions she takes on the list, the shape of her reply). The tools in `apps/agent/src/tools.ts` use its names.
 - `docs/test-script.md`: the fixed messages to send her and what a pass looks like.
+
+## Layout
+
+One repo, npm workspaces, everything under `apps/`:
+
+- `apps/agent`: the Cloudflare Worker that receives WhatsApp messages and runs the agent.
+- `apps/web`: the landing page, plain static files for now.
+- `docs`: the prompt, what the agent needs and the test script, shared by both.
+
+New Workers and web apps go in `apps/` as their own workspace.
+
+## How the agent is built
+
+One Cloudflare Worker, a D1 database called `handup` and a Durable Object per phone number. The decisions are on Superthread card 273. Paths below are inside `apps/agent`.
+
+- **In:** WhatsApp posts to `/handup/webhook`. The Worker checks the signature and hands the message to that phone number's Durable Object (`src/user-turn.ts`).
+- **Turns:** the Durable Object runs one turn at a time from an alarm. Messages sent within 3 seconds of each other become one turn. A failed turn is retried up to three times, then the person gets one apology. A turn that already replied is never rerun.
+- **First message:** no model call. The Worker seeds the ten starter items and sends a template (`src/starter.ts`).
+- **Later turns:** Claude Opus 5.5 through the Vercel AI SDK (`src/agent.ts`). The model id and every tunable number live in `src/config.ts`.
+- **What the model sees:** the system prompt, then the "What you know" block from `docs/agent-needs.md` (profile, dates, the list, notes), then every message after the user's cursor as plain text (`src/context.ts`).
+- **Memory:** the agent saves lasting facts with `save_note`. When the chat after the cursor passes 24,000 characters, a second model call folds the oldest half into the notes and moves the cursor (`src/fold.ts`). The fold is built but not yet tested against a real model.
+- **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped. There is no web page for the list in the MVP.
+- **No money, nothing private:** `src/guard.ts` strips amounts and refuses items with an amount, a phone number or an obvious address.
+- **Repeat safety:** adds and ticks are tied to the turn's first inbound message, so a retried turn can't apply them twice.
+- **Out:** a line with only `---PASTE---` splits the reply, so the message to paste arrives as its own chat bubble.
+- **Deleting:** the person sends `/forget`, confirms once, and the Worker deletes everything it holds on them.
+- **Channel:** WhatsApp sits behind the small `Channel` interface in `src/channel.ts`, so iMessage could replace it.
+- **Spikes:** `spikes/alarm` is the throwaway Worker that tested long alarms.
+
+## Running it
+
+From the repo root:
+
+- `npm install`, then copy `apps/agent/.dev.vars.example` to `apps/agent/.dev.vars` and fill it in. With no WhatsApp token, replies are logged instead of sent.
+- `npm run db:migrate` sets up the local database, and `npm run dev` starts the Worker.
+- `npm run dev:web` serves the landing page on port 4318.
+- `npm test` and `npm run typecheck` before you commit. Tests sit next to the file they cover.
+- Run wrangler from `apps/agent` as `npm run wrangler -- <args>`, never bare `npx wrangler`.
+- If the migration file changes before the first deploy, delete `apps/agent/.wrangler/state` and run `npm run db:migrate` again.
