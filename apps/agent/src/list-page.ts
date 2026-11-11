@@ -67,6 +67,8 @@ li + li { border-top: 1px solid var(--panel-line); }
 .done .n { border-color: var(--gold); background: var(--gold); color: #3b2416; }
 .done s { color: var(--soft-ink); }
 .by { display: block; margin-top: 2px; font-family: var(--display); font-style: italic; font-weight: 600; font-size: 18px; color: var(--accent); }
+.count.sorted { border-top: 1px solid var(--panel-line); }
+.when { display: block; font-size: 13.5px; color: var(--soft-ink); }
 .empty { margin: 0; padding: 22px 18px; color: var(--soft-ink); }
 .how { margin-top: 28px; text-align: center; }
 .how h2 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 600; font-size: 28px; line-height: 1.1; }
@@ -110,16 +112,27 @@ function itemRow(item: Item): string {
   if (item.status === "open") return `<li>${number}<span class="t">${escapeHtml(item.text)}</span></li>`;
   const claim = item.claims[item.claims.length - 1];
   const helper = claim?.show_name && claim.helper_first_name ? `Sorted by ${escapeHtml(claim.helper_first_name)}` : "Sorted";
-  return `<li class="done">${number}<span class="t"><s>${escapeHtml(item.text)}</s><span class="by">${helper}</span></span></li>`;
+  const when = claim ? `<span class="when">${escapeHtml(ukDateTime(claim.claimed_at))}</span>` : "";
+  return `<li class="done">${number}<span class="t"><s>${escapeHtml(item.text)}</s><span class="by">${helper}</span>${when}</span></li>`;
 }
 
 export function renderListPage(items: Item[], lastChange: string | null): string {
   const live = items.filter((item) => item.status !== "removed");
-  const open = live.filter((item) => item.status === "open").length;
+  const stillOpen = live.filter((item) => item.status === "open");
+  const sorted = live.filter((item) => item.status !== "open");
+  const open = stillOpen.length;
+  const rows = (group: Item[]) => `<ol>\n${group.map(itemRow).join("\n")}\n</ol>`;
   const list =
     live.length === 0
       ? '<p class="empty">Nothing on the list right now. Check back in a bit.</p>'
-      : `<p class="count">${countLine(open, live.length)}</p>\n<ol>\n${live.map(itemRow).join("\n")}\n</ol>`;
+      : [
+          `<p class="count">${countLine(open, live.length)}</p>`,
+          open > 0 ? rows(stillOpen) : "",
+          open > 0 && sorted.length > 0 ? '<p class="count sorted">Already sorted</p>' : "",
+          sorted.length > 0 ? rows(sorted) : "",
+        ]
+          .filter(Boolean)
+          .join("\n");
   const how =
     open === 0
       ? ""
