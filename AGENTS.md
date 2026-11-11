@@ -42,6 +42,7 @@ The agent's aim, the user story and the system prompt are in `docs/agent-prompt.
 
 - `docs/agent-needs.md`: what the agent needs from scaffolding (the block that goes in with every message, the actions she takes on the list, the shape of her reply). The tools in `apps/agent/src/tools.ts` use its names.
 - `docs/test-script.md`: the fixed messages to send her and what a pass looks like.
+- `docs/feedback.md`: every piece of feedback on how she talks, what was decided and whether the fix held. The prompt only changes through a row there. Each run is written up in `docs/test-runs/` from `TEMPLATE.md`.
 
 ## Layout
 
@@ -81,4 +82,5 @@ From the repo root:
 - `npm run dev:web` serves the landing page on port 4318.
 - `npm test` and `npm run typecheck` before you commit. Tests sit next to the file they cover.
 - Run wrangler from `apps/agent` as `npm run wrangler -- <args>`, never bare `npx wrangler`.
+- CI and deploys are one workflow, `.github/workflows/ci.yml`. Every pull request and push to `main` runs typecheck and tests on Node 22, and `main` requires that `test` check before a merge. A push to `main` that touches `apps/agent`, `docs/agent-prompt.md`, the root `package.json` or lockfile, or the workflow then applies the remote D1 migrations and deploys the Worker, one deploy at a time. It signs in with the org's `CLOUDFLARE_API_TOKEN` secret and sets the Worker's `ANTHROPIC_API_KEY` from the org secret on every deploy. The WhatsApp secrets are set by hand with `npm run wrangler -- secret put <NAME>` and survive deploys. To deploy without a code change, run the CI workflow by hand on `main`.
 - If the migration file changes before the first deploy, delete `apps/agent/.wrangler/state` and run `npm run db:migrate` again.
