@@ -1,0 +1,23 @@
+{
+  "name": "handup",
+  "account_id": "9b4d3e616e55585a0ae844f424717b43",
+  "compatibility_date": "2026-10-01",
+  "main": "./src/index.ts",
+  "rules": [{ "type": "Text", "globs": ["**/*.md"], "fallthrough": true }],
+  "vars": {
+    "WHATSAPP_PHONE_NUMBER_ID": ""
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "handup",
+      "database_id": "b3fc4648-a237-40ee-a5dc-5383a3f1ff32",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "USER_TURN", "class_name": "UserTurn" }]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["UserTurn"] }],
+  "workers_dev": true
+}
