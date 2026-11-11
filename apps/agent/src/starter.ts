@@ -1,7 +1,7 @@
 /** The first reply, as separate chat bubbles: a word of care, the link to the list, then what to do next. */
 export function firstReply(listPage: string): string[] {
   return [
-    "Hi, I'm Handup. You must be going through a lot. Feeling shocked is normal, and none of this needs doing today. Rest first if you need to.",
+    "You must be going through a lot. Feeling shocked is normal, and none of this needs doing today. Rest first if you need to.",
     [
       "When you're ready, here's a short list of things your friends and family can do for you. They might have a spare laptop, a free desk at their office, or be glad to cook you a warm meal. Most people want to help but don't know how, so letting them is a gift to them too.",
       listPage,
