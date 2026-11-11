@@ -3,7 +3,7 @@
 Day 8 of 40 for 40, built live on Twitch on Wednesday 11 November 2026. The problem is "Sudden mass layoffs", from Lawrence. Work is tracked on the Superthread `day8` board and the "Day 8" page.
 
 - **Form factor:** WhatsApp or iMessage.
-- **Name:** Handup. Anything web-facing is served at `build40for40.com/handup/`.
+- **Name:** Handup, served at `build40for40.com/handup/` once it has a web-facing part.
 
 Shared 40 for 40 context lives in `../AGENTS.md`.
 
