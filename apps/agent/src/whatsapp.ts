@@ -70,30 +70,50 @@ export function parseInbound(payload: WhatsAppPayload): InboundMessage[] {
   return inbound;
 }
 
+async function post(env: Env, to: string, message: Record<string, unknown>): Promise<void> {
+  const response = await fetch(
+    `https://graph.facebook.com/${WHATSAPP_GRAPH_VERSION}/${env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
+    {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${env.WHATSAPP_ACCESS_TOKEN}`,
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ messaging_product: "whatsapp", to, ...message }),
+    },
+  );
+  if (!response.ok) throw new Error(`WhatsApp send failed with ${response.status}`);
+}
+
+const canSend = (env: Env) => Boolean(env.WHATSAPP_ACCESS_TOKEN && env.WHATSAPP_PHONE_NUMBER_ID);
+
 export function whatsAppChannel(env: Env): Channel {
   return {
     async send(to, text) {
-      if (!env.WHATSAPP_ACCESS_TOKEN || !env.WHATSAPP_PHONE_NUMBER_ID) {
+      if (!canSend(env)) {
         console.log(`[dry run] to …${to.slice(-4)}:\n${text}`);
         return;
       }
-      const response = await fetch(
-        `https://graph.facebook.com/${WHATSAPP_GRAPH_VERSION}/${env.WHATSAPP_PHONE_NUMBER_ID}/messages`,
-        {
-          method: "POST",
-          headers: {
-            authorization: `Bearer ${env.WHATSAPP_ACCESS_TOKEN}`,
-            "content-type": "application/json",
-          },
-          body: JSON.stringify({
-            messaging_product: "whatsapp",
-            to,
-            type: "text",
-            text: { body: text, preview_url: false },
-          }),
-        },
-      );
-      if (!response.ok) throw new Error(`WhatsApp send failed with ${response.status}`);
+      await post(env, to, { type: "text", text: { body: text, preview_url: false } });
     },
   };
+}
+
+export async function sendTemplate(
+  env: Env,
+  to: string,
+  template: { name: string; language: string; params: string[] },
+): Promise<void> {
+  if (!canSend(env)) {
+    console.log(`[dry run] template ${template.name} to …${to.slice(-4)}: ${template.params.join(" | ")}`);
+    return;
+  }
+  await post(env, to, {
+    type: "template",
+    template: {
+      name: template.name,
+      language: { code: template.language },
+      components: [{ type: "body", parameters: template.params.map((text) => ({ type: "text", text })) }],
+    },
+  });
 }

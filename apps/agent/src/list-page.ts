@@ -1,5 +1,6 @@
-import { LANDING_PATH, LIST_PAGE_PATH, SITE_ORIGIN } from "./config";
+import { LANDING_PATH, LIST_PAGE_PATH, LIVE_CHECK_MS, OFFER_NAME_MAX_CHARS, SITE_ORIGIN } from "./config";
 import * as db from "./db";
+import { handleOffer, type OfferNotice } from "./offers";
 import { ukDateTime } from "./time";
 import type { Env, Item } from "./types";
 
@@ -69,6 +70,18 @@ li + li { border-top: 1px solid var(--panel-line); }
 .by { display: block; margin-top: 2px; font-family: var(--display); font-style: italic; font-weight: 600; font-size: 18px; color: var(--accent); }
 .count.sorted { border-top: 1px solid var(--panel-line); }
 .when { display: block; font-size: 13.5px; color: var(--soft-ink); }
+.offered .n { border-style: dashed; }
+details { margin-top: 8px; }
+summary { display: inline-block; cursor: pointer; list-style: none; padding: 7px 16px; border-radius: 999px; border: 1.5px solid var(--accent); color: var(--accent); font-weight: 600; font-size: 15px; }
+summary::-webkit-details-marker { display: none; }
+details[open] summary { background: var(--accent); color: var(--panel); }
+form { margin-top: 12px; }
+label { display: block; font-size: 14px; color: var(--soft-ink); }
+.go { display: flex; gap: 8px; margin-top: 4px; }
+input[name="name"] { flex: 1; min-width: 0; box-sizing: border-box; font: inherit; font-size: 16px; color: var(--ink); background: var(--page); border: 1px solid var(--panel-line); border-radius: 10px; padding: 10px 12px; }
+button { flex: none; font: inherit; font-weight: 600; cursor: pointer; border: none; border-radius: 10px; padding: 10px 18px; background: var(--accent); color: var(--panel); }
+.small { margin: 8px 0 0; font-size: 13.5px; color: var(--soft-ink); }
+.notice { margin: 22px 0 -8px; padding: 12px 16px; border-radius: 12px; border: 1px solid var(--gold); background: var(--panel); text-align: center; }
 .empty { margin: 0; padding: 22px 18px; color: var(--soft-ink); }
 .how { margin-top: 28px; text-align: center; }
 .how h2 { margin: 0; font-family: var(--display); font-style: italic; font-weight: 600; font-size: 28px; line-height: 1.1; }
@@ -107,21 +120,67 @@ function countLine(open: number, total: number): string {
   return `<b>${total - open} of ${total}</b> sorted, ${open} still open`;
 }
 
-function itemRow(item: Item): string {
+const NOTICES: Record<OfferNotice, string> = {
+  offered: "Thank you. They've been sent a message, and it gets crossed off once they say yes.",
+  name: "That name didn't go through. A first name is all it needs, letters only.",
+  taken: "Someone got there just before you. Is there another one you could do?",
+  gone: "That one isn't open any more. Is there another one you could do?",
+  busy: "Lots of offers have come in at once. Try again in a bit, or message them directly.",
+};
+
+function offerForm(slug: string, item: Item): string {
+  return `<details><summary>I can do this</summary>
+<form method="post" action="${LIST_PAGE_PATH}${slug}/offer">
+<input type="hidden" name="number" value="${item.number}">
+<label for="name${item.number}">Your first name</label>
+<div class="go"><input id="name${item.number}" name="name" required maxlength="${OFFER_NAME_MAX_CHARS}" autocomplete="given-name" autocapitalize="words"><button type="submit">Offer</button></div>
+<p class="small">They'll get a message and say yes before it's crossed off.</p>
+</form></details>`;
+}
+
+function itemRow(item: Item, slug: string): string {
   const number = `<span class="n">${item.number}</span>`;
-  if (item.status === "open") return `<li>${number}<span class="t">${escapeHtml(item.text)}</span></li>`;
+  if (item.status === "open" && item.offer) {
+    return `<li id="i${item.number}" class="offered">${number}<div class="t">${escapeHtml(item.text)}<span class="by">${escapeHtml(item.offer.helper_first_name)} has offered</span><span class="when">Waiting for a yes since ${escapeHtml(ukDateTime(item.offer.created_at))}</span></div></li>`;
+  }
+  if (item.status === "open") {
+    return `<li id="i${item.number}">${number}<div class="t">${escapeHtml(item.text)}${offerForm(slug, item)}</div></li>`;
+  }
   const claim = item.claims[item.claims.length - 1];
   const helper = claim?.show_name && claim.helper_first_name ? `Sorted by ${escapeHtml(claim.helper_first_name)}` : "Sorted";
   const when = claim ? `<span class="when">${escapeHtml(ukDateTime(claim.claimed_at))}</span>` : "";
-  return `<li class="done">${number}<span class="t"><s>${escapeHtml(item.text)}</s><span class="by">${helper}</span>${when}</span></li>`;
+  return `<li class="done">${number}<div class="t"><s>${escapeHtml(item.text)}</s><span class="by">${helper}</span>${when}</div></li>`;
 }
 
-export function renderListPage(items: Item[], lastChange: string | null): string {
+// Keeps an open page current: asks for the time of the list's last change, and reloads when it moves.
+function liveScript(nonce: string, version: string): string {
+  return `<script nonce="${nonce}">(function () {
+  var seen = ${JSON.stringify(version)};
+  var path = location.pathname.replace(/\\/$/, "");
+  function check() {
+    if (document.hidden || document.querySelector("details[open]")) return;
+    fetch(path + "/v", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : seen; })
+      .then(function (now) { if (now !== seen) location.replace(path); })
+      .catch(function () {});
+  }
+  setInterval(check, ${LIVE_CHECK_MS});
+  document.addEventListener("visibilitychange", check);
+})();</script>`;
+}
+
+export function renderListPage(
+  items: Item[],
+  lastChange: string | null,
+  slug: string,
+  notice: OfferNotice | null = null,
+  nonce: string | null = null,
+): string {
   const live = items.filter((item) => item.status !== "removed");
   const stillOpen = live.filter((item) => item.status === "open");
   const sorted = live.filter((item) => item.status !== "open");
   const open = stillOpen.length;
-  const rows = (group: Item[]) => `<ol>\n${group.map(itemRow).join("\n")}\n</ol>`;
+  const rows = (group: Item[]) => `<ol>\n${group.map((item) => itemRow(item, slug)).join("\n")}\n</ol>`;
   const list =
     live.length === 0
       ? '<p class="empty">Nothing on the list right now. Check back in a bit.</p>'
@@ -138,13 +197,14 @@ export function renderListPage(items: Item[], lastChange: string | null): string
       ? ""
       : `<section class="how">
 <h2>Can you do one?</h2>
-<p>Message them with its number. They'll cross it off here, so nobody doubles up.</p>
+<p>Tap "I can do this" on it and leave your first name. They'll get a message, and it's crossed off here once they say yes, so nobody doubles up.</p>
 </section>`;
   return page(
     "A Handup list",
     "Someone you know has lost their job. Here are a few favours that would help, and what's still open.",
     `<h1>A few things that would help right now</h1>
 <p class="lede">Someone you know has lost their job, and people keep asking what they can do. This is the answer: things lent, things done and a bit of your time. Nothing to buy, and no money.</p>
+${notice ? `<p class="notice" role="status">${NOTICES[notice]}</p>` : ""}
 <section class="card">
 ${list}
 </section>
@@ -152,7 +212,8 @@ ${how}
 <footer>
 ${lastChange ? `<p>Last changed ${escapeHtml(ukDateTime(lastChange))}, UK time.</p>` : ""}
 <p>Kept up to date by <a href="${LANDING_PATH}">Handup</a>, day 8 of 40 for 40.</p>
-</footer>`,
+</footer>
+${nonce ? liveScript(nonce, lastChange ?? "") : ""}`,
   );
 }
 
@@ -168,27 +229,48 @@ export function renderMissingPage(): string {
   );
 }
 
-function html(body: string, status: number): Response {
+function html(body: string, status: number, nonce: string | null = null): Response {
   return new Response(body, {
     status,
     headers: {
       "content-type": "text/html; charset=utf-8",
       "cache-control": "no-store",
       "x-robots-tag": "noindex, nofollow",
-      "referrer-policy": "no-referrer",
+      "referrer-policy": "same-origin",
       "x-content-type-options": "nosniff",
       "content-security-policy":
-        "default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: " +
-        `${SITE_ORIGIN}; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`,
+        `default-src 'none'; ${nonce ? `script-src 'nonce-${nonce}'; connect-src 'self'; ` : ""}` +
+        "style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: " +
+        `${SITE_ORIGIN}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
     },
   });
 }
 
-export async function handleListPage(request: Request, env: Env): Promise<Response> {
-  if (request.method !== "GET" && request.method !== "HEAD") return new Response("Method not allowed", { status: 405 });
-  const slug = new URL(request.url).pathname.slice(LIST_PAGE_PATH.length).replace(/\/$/, "");
+export async function handleListPage(
+  request: Request,
+  env: Env,
+  defer?: (work: Promise<unknown>) => void,
+): Promise<Response> {
+  const url = new URL(request.url);
+  const [slug, action, ...rest] = url.pathname.slice(LIST_PAGE_PATH.length).replace(/\/$/, "").split("/");
+  const isOffer = action === "offer" && rest.length === 0;
+  const isVersion = action === "v" && rest.length === 0;
+  if (action !== undefined && !isOffer && !isVersion) return html(renderMissingPage(), 404);
+  const allowed = isOffer ? request.method === "POST" : request.method === "GET" || request.method === "HEAD";
+  if (!allowed) return new Response("Method not allowed", { status: 405 });
+
   const list = SLUG.test(slug) ? await db.getLiveListBySlug(env.DB, slug) : null;
   if (!list) return html(renderMissingPage(), 404);
+  if (isOffer) return handleOffer(request, env, list, { defer });
+  if (isVersion) {
+    return new Response((await db.lastListChange(env.DB, list.id)) ?? "", {
+      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" },
+    });
+  }
+
   const [items, lastChange] = await Promise.all([db.getItems(env.DB, list.id), db.lastListChange(env.DB, list.id)]);
-  return html(renderListPage(items, lastChange), 200);
+  const r = url.searchParams.get("r");
+  const notice = r !== null && Object.hasOwn(NOTICES, r) ? (r as OfferNotice) : null;
+  const nonce = crypto.randomUUID().replaceAll("-", "");
+  return html(renderListPage(items, lastChange, list.slug, notice, nonce), 200, nonce);
 }

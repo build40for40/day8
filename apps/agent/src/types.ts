@@ -44,6 +44,13 @@ export interface Claim {
   claimed_at: string;
 }
 
+export interface Offer {
+  id: number;
+  helper_first_name: string;
+  notified_at: string | null;
+  created_at: string;
+}
+
 export interface Item {
   id: number;
   number: number;
@@ -51,4 +58,5 @@ export interface Item {
   why: string | null;
   status: "open" | "covered" | "removed";
   claims: Claim[];
+  offer?: Offer | null;
 }

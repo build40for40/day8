@@ -60,7 +60,18 @@ export function makeTools(ctx: ToolContext) {
     remove_item: tool({
       description: "Drop an item. Its number is retired and the other numbers stay as they are.",
       inputSchema: z.object({ number }),
-      execute: async ({ number }) => done(await db.setItemStatus(ctx.db, ctx.list.id, number, "removed")),
+      execute: async ({ number }) => {
+        await db.resolveOffer(ctx.db, ctx.list.id, number, "declined");
+        return done(await db.setItemStatus(ctx.db, ctx.list.id, number, "removed"));
+      },
+    }),
+    decline_offer: tool({
+      description: "Clear an offer a friend made on the list page, when the person says it isn't right. The item stays open.",
+      inputSchema: z.object({ number }),
+      execute: async ({ number }) => {
+        const cleared = await db.resolveOffer(ctx.db, ctx.list.id, number, "declined");
+        return cleared ? { ok: true, ...(await listNow()) } : { ok: false, error: "No offer waiting on that item", ...(await listNow()) };
+      },
     }),
     tick_item: tool({
       description: "Mark an item as covered.",
@@ -77,7 +88,10 @@ export function makeTools(ctx: ToolContext) {
           source: FORWARDED.test(ctx.inboundText) ? "forwarded_message" : "told_by_user",
         } as const;
         const added = await db.addClaim(ctx.db, ctx.list.id, number, claim, ctx.turnMessageId);
-        if (added) await db.setItemStatus(ctx.db, ctx.list.id, number, "covered");
+        if (added) {
+          await db.setItemStatus(ctx.db, ctx.list.id, number, "covered");
+          await db.resolveOffer(ctx.db, ctx.list.id, number, "confirmed");
+        }
         return done(added);
       },
     }),
