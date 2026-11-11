@@ -3,7 +3,7 @@ import type { Channel, InboundMessage } from "./channel";
 import * as db from "./db";
 import { runTurn } from "./turn";
 import type { Env } from "./types";
-import { whatsAppChannel } from "./whatsapp";
+import { twilioChannel } from "./twilio";
 
 export const BURST_DEBOUNCE_MS = 3_000;
 export const MAX_TURN_ATTEMPTS = 3;
@@ -47,7 +47,7 @@ export class UserTurn extends DurableObject<Env> {
       await storage.delete("turn");
       return;
     }
-    const channel = whatsAppChannel(this.env);
+    const channel = twilioChannel(this.env);
 
     // An unfinished turn left in storage means the last run died or threw part way through.
     let unfinished = await storage.get<TurnState>("turn");
