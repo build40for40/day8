@@ -21,7 +21,9 @@
   "migrations": [{ "tag": "v1", "new_sqlite_classes": ["UserTurn"] }],
   "routes": [
     { "pattern": "build40for40.com/handup/api/*", "zone_name": "build40for40.com" },
-    { "pattern": "www.build40for40.com/handup/api/*", "zone_name": "build40for40.com" }
+    { "pattern": "www.build40for40.com/handup/api/*", "zone_name": "build40for40.com" },
+    { "pattern": "build40for40.com/handup/l/*", "zone_name": "build40for40.com" },
+    { "pattern": "www.build40for40.com/handup/l/*", "zone_name": "build40for40.com" }
   ],
   "workers_dev": true
 }

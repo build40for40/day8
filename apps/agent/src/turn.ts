@@ -3,6 +3,7 @@ import type { Channel } from "./channel";
 import { DAILY_MESSAGE_CAP } from "./config";
 import * as db from "./db";
 import { planFold } from "./fold";
+import { listPageUrl } from "./list-page";
 import { splitReply } from "./reply";
 import {
   DAILY_CAP_REPLY,
@@ -50,7 +51,7 @@ export async function runTurn(env: Env, channel: Channel, phone: string): Promis
   let list = await db.getListForUser(env.DB, user.id);
   if (!list) {
     list = await db.createListWithItems(env.DB, user.id, STARTER_ITEMS);
-    await send(firstReply(STARTER_ITEMS));
+    await send(firstReply(listPageUrl(list.slug)));
     return handled();
   }
 

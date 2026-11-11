@@ -15,6 +15,10 @@ export const WHATSAPP_GRAPH_VERSION = "v21.0";
 
 export const WEBHOOK_PATH = "/handup/webhook";
 
+export const SITE_ORIGIN = "https://build40for40.com";
+export const LANDING_PATH = "/handup/";
+export const LIST_PAGE_PATH = "/handup/l/";
+
 export const WEB_CHAT_PATH = "/handup/api/chat";
 export const WEB_CHAT_ALLOWED_ORIGINS = ["https://build40for40.com", "https://www.build40for40.com"];
 export const WEB_CHAT_MAX_TURNS = 40;

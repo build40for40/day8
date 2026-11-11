@@ -10,6 +10,7 @@ The prompt ends with a "What you know" section and expects this block straight a
 Profile: <a few lines about the person, or "nothing yet">
 List started: 11 November 2026
 Today's date: 14 November 2026
+List page: https://build40for40.com/handup/l/0123456789abcdef
 List:
 1. A laptop to borrow, if the work one has to go back [open]
 2. A desk or a quiet spot with good Wi-Fi to work from [ticked, Sara, 12 Nov]
@@ -18,6 +19,7 @@ Notes from earlier chats: <short notes, or "none">
 ```
 
 - **Today's date and the list's start date are required.** The prompt asks once whether anything has changed when the list is more than a week old. Dates are Europe/London.
+- **The list page line is the person's own link** to the read-only web page of their list. It is left out where there is no page, as in the landing page's live chat.
 - **Every item keeps its number for life.** A ticked or removed item never frees its number, and a new item takes the next unused one.
 - **First names only** for helpers, and only if the person said yes to showing them.
 

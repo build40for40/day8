@@ -1,4 +1,5 @@
-import { WEB_CHAT_PATH, WEBHOOK_PATH } from "./config";
+import { LIST_PAGE_PATH, WEB_CHAT_PATH, WEBHOOK_PATH } from "./config";
+import { handleListPage } from "./list-page";
 import type { Env } from "./types";
 import type { UserTurn } from "./user-turn";
 import { handleWebChat } from "./web-chat";
@@ -30,6 +31,7 @@ export default {
       return new Response("Method not allowed", { status: 405 });
     }
     if (url.pathname === WEB_CHAT_PATH) return handleWebChat(request, env);
+    if (url.pathname.startsWith(LIST_PAGE_PATH)) return handleListPage(request, env);
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;

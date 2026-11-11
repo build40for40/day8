@@ -3,6 +3,7 @@ import { generateText, isStepCount, type LanguageModel, type ModelMessage, type 
 import agentPromptDoc from "../../../docs/agent-prompt.md";
 import { MAX_OUTPUT_TOKENS, MAX_TOOL_STEPS, MODEL_EFFORT, MODEL_ID, MODEL_TIMEOUT_MS } from "./config";
 import { buildInstructions, toChatTurns, whatYouKnow } from "./context";
+import { listPageUrl } from "./list-page";
 import { capNotes, FOLD_INSTRUCTIONS, foldPrompt } from "./fold";
 import { extractPrompt, extractStarterItems } from "./prompt";
 import { makeTools, type ToolContext } from "./tools";
@@ -64,6 +65,7 @@ export async function reply(
         profile: user.first_name ? `Goes by ${user.first_name}.` : null,
         notes: user.notes,
         items: input.items,
+        listPage: listPageUrl(list.slug),
       }),
     ),
     messages: toChatTurns(input.messages),

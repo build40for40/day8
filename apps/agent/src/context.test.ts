@@ -46,6 +46,18 @@ test("the what-you-know block follows the shape the prompt expects", () => {
   );
 });
 
+test("the what-you-know block carries the list page link when there is one", () => {
+  const block = whatYouKnow({
+    now: "2026-11-14T09:00:00Z",
+    listStartedAt: "2026-11-11T14:02:00Z",
+    profile: null,
+    notes: "",
+    items: [],
+    listPage: "https://build40for40.com/handup/l/0123456789abcdef",
+  });
+  expect(block.split("\n")[3]).toBe("List page: https://build40for40.com/handup/l/0123456789abcdef");
+});
+
 test("the wiring rules go in just before the what-you-know section", () => {
   const instructions = buildInstructions("You are Handup.\n\n# What you know\n\nBelow is what you know.", "Profile: nothing yet");
   expect(instructions.indexOf("---PASTE---")).toBeGreaterThan(0);

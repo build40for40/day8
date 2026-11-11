@@ -21,7 +21,8 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 **How it works:**
 
 - The user talks to an AI agent in a chat app. The agent builds their list with them, starting from a starter pack of about 10 common things.
-- There is no web list in the MVP. The list lives in the chat. The agent gives the user a ready-made message to copy and paste to friends, family and groups.
+- The list lives on a read-only web page at its own unguessable link, `build40for40.com/handup/l/<slug>`, so the person and their friends always see it as it stands. Nobody ticks anything off there.
+- The agent sends that link in place of writing the list out, and gives the user a ready-made message with the link in it to copy and paste to friends, family and groups.
 - Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off, gives them a short thank-you to paste and offers one next ask. It doesn't send the whole list again after every tick.
 - The landing page just shows the chat flow.
 
@@ -60,11 +61,12 @@ One Cloudflare Worker, a D1 database called `handup` and a Durable Object per ph
 
 - **In:** WhatsApp posts to `/handup/webhook`. The Worker checks the signature and hands the message to that phone number's Durable Object (`src/user-turn.ts`).
 - **Turns:** the Durable Object runs one turn at a time from an alarm. Messages sent within 3 seconds of each other become one turn. A failed turn is retried up to three times, then the person gets one apology. A turn that already replied is never rerun.
-- **First message:** no model call. The Worker seeds the ten starter items and sends a template (`src/starter.ts`).
+- **First message:** no model call. The Worker seeds the ten starter items and sends a template with the link to the list page (`src/starter.ts`).
 - **Later turns:** Claude Opus 5.5 through the Vercel AI SDK (`src/agent.ts`). The model id and every tunable number live in `src/config.ts`.
 - **What the model sees:** the system prompt, then the "What you know" block from `docs/agent-needs.md` (profile, dates, the list, notes), then every message after the user's cursor as plain text (`src/context.ts`).
 - **Memory:** the agent saves lasting facts with `save_note`. When the chat after the cursor passes 24,000 characters, a second model call folds the oldest half into the notes and moves the cursor (`src/fold.ts`). The fold is built but not yet tested against a real model.
-- **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped. There is no web page for the list in the MVP.
+- **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped.
+- **The list page:** `GET /handup/l/<slug>` (`src/list-page.ts`) renders the list from D1 on every request, in the landing page's fresco look, with the two hands loaded from `build40for40.com/handup/`. The slug is 16 random hex characters made when the list is created, and the agent sees the full link as "List page" in "What you know". It shows what's still open first, then what's sorted, each with its number, and for a sorted item when it was ticked and the helper's first name where the tick allows it. No name for the person, nothing they said, no phone number. It is never cached or indexed. An unknown or taken down slug, or a list deleted with `/forget`, gets a 404 page.
 - **No money, nothing private:** `src/guard.ts` strips amounts and refuses items with an amount, a phone number or an obvious address.
 - **Repeat safety:** adds and ticks are tied to the turn's first inbound message, so a retried turn can't apply them twice.
 - **Out:** each paragraph of a reply is its own chat bubble, with a numbered list kept in the bubble of the line above it. A line with only `---PASTE---` starts the message to paste, which arrives whole as one bubble. The landing page's live chat splits the same way.
