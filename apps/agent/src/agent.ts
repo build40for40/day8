@@ -8,14 +8,14 @@ import { extractPrompt, extractStarterItems } from "./prompt";
 import { makeTools, type ToolContext } from "./tools";
 import type { Env, Item, StoredMessage } from "./types";
 
-const SYSTEM_PROMPT = extractPrompt(agentPromptDoc);
+export const SYSTEM_PROMPT = extractPrompt(agentPromptDoc);
 export const STARTER_ITEMS = extractStarterItems(SYSTEM_PROMPT);
 
-const providerOptions = {
+export const providerOptions = {
   anthropic: { effort: MODEL_EFFORT, fallbacks: "default" } satisfies AnthropicLanguageModelOptions,
 };
 
-function model(env: Env) {
+export function model(env: Env) {
   if (!env.ANTHROPIC_API_KEY) throw new Error("ANTHROPIC_API_KEY is not set");
   return createAnthropic({ apiKey: env.ANTHROPIC_API_KEY, baseURL: env.ANTHROPIC_BASE_URL || undefined })(MODEL_ID);
 }

@@ -69,6 +69,7 @@ One Cloudflare Worker, a D1 database called `handup` and a Durable Object per ph
 - **Repeat safety:** adds and ticks are tied to the turn's first inbound message, so a retried turn can't apply them twice.
 - **Out:** a line with only `---PASTE---` splits the reply, so the message to paste arrives as its own chat bubble.
 - **Deleting:** the person sends `/forget`, confirms once, and the Worker deletes everything it holds on them.
+- **Landing page chat:** `POST /handup/api/chat` (`src/web-chat.ts`) answers the page's live chat with a plain model call: no tools, nothing stored, the list lives in the turns the page sends. The Worker adds the prompt, an empty "What you know" block with the starter list, and the paste marker rule. It only answers `build40for40.com` pages (plus `WEB_CHAT_DEV_ORIGIN` locally), refuses over 40 turns or 2,000 characters in a user message, allows 30 messages an hour per IP address (429 after that), and after $10 of model spend in a UK day replies with a fixed "back tomorrow" line. The counters are rows in the D1 table `web_chat_counters`, with the IP address hashed.
 - **Channel:** WhatsApp sits behind the small `Channel` interface in `src/channel.ts`, so iMessage could replace it.
 - **Spikes:** `spikes/alarm` is the throwaway Worker that tested long alarms.
 

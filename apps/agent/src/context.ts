@@ -31,12 +31,12 @@ export const SCAFFOLDING_RULES = `# How this chat is wired
 
 const KNOW_HEADING = "# What you know";
 
-export function buildInstructions(systemPrompt: string, block: string): string {
+export function buildInstructions(systemPrompt: string, block: string, rules = SCAFFOLDING_RULES): string {
   const at = systemPrompt.lastIndexOf(KNOW_HEADING);
   const withRules =
     at === -1
-      ? `${systemPrompt}\n\n${SCAFFOLDING_RULES}`
-      : `${systemPrompt.slice(0, at)}${SCAFFOLDING_RULES}\n\n${systemPrompt.slice(at)}`;
+      ? `${systemPrompt}\n\n${rules}`
+      : `${systemPrompt.slice(0, at)}${rules}\n\n${systemPrompt.slice(at)}`;
   return `${withRules}\n\n${block}`;
 }
 
