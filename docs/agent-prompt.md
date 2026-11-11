@@ -125,6 +125,5 @@ Below is what you know about this person: their profile, their list as it stands
 - The aim says "5 to 10 things within about ten minutes". With the story, it is ten things in the first reply. The aim still holds, and could be tightened.
 
 - WhatsApp or iMessage. The Replying section is written to work on either.
-- `AGENTS.md` still says the list is a web page with a link, and gives Wi-Fi and a paid subscription as examples. This prompt follows Samira's feedback instead, so the Direction section needs the team to agree and update it.
 - How someone deletes their data. The prompt says "tell them how" and needs the real answer.
 - Whether the agent may message first (a nudge after a few quiet days). The prompt says it can't.

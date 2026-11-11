@@ -13,15 +13,15 @@ Yesterday, while we were building Poppy, my wife called me unexpectedly. The ent
 
 ## Direction
 
-Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think a laptop, Wi-Fi, a desk to work from, or a month of a subscription paid for. No money changes hands through Handup, so no pooled funds, donations or payments.
+Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think the loan of a laptop, a desk to work from, a lift to an interview or a practice interview. No money is exchanged in the MVP: nothing is paid through Handup, and nothing on a list is something a friend has to buy or pay for. So no pooled funds, donations, payments, bills or subscriptions.
 
 **Who it's for:** mid-career people with real outgoings (a mortgage, kids) who are new to AI, from the day they're laid off to about two weeks later. That's when they're in shock and need practical help fast, like cutting outgoings and keeping a laptop and a place to work.
 
 **How it works:**
 
 - The user talks to an AI agent in a chat app. The agent builds their list with them, starting from a starter pack of about 10 common things.
-- The list itself is a web page. The agent gives the user a link or a ready-made message to forward to friends, family and groups.
-- Updates come back the same way: the user forwards messages to the agent, and it updates the list.
+- There is no web list in the MVP. The list lives in the chat. The agent gives the user a ready-made message to copy and paste to friends, family and groups.
+- Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off and gives them a fresh message to paste.
 - The landing page just shows the chat flow.
 
 **MVP:**
