@@ -4,7 +4,7 @@ Day 8 of 40 for 40, built live on Twitch on Wednesday 11 November 2026. The prob
 
 - **Form factor:** WhatsApp or iMessage.
 - **Name:** Handup, served at `build40for40.com/handup/` once it has a web-facing part.
-- **Landing page:** `landing/index.html` is the draft page: one file, a WhatsApp chat in a phone that plays out as you scroll, from being laid off to the list, the message to paste and a friend's offer ticked off. The conversation is the plain text block near the bottom of the file, one line per message. The look is the Creation of Adam: fresco plaster, and on wide screens the two reaching hands (`landing/hand-adam.jpg`, `landing/hand-god.jpg`, cropped from the public-domain fresco) sit either side of the phone. Set `WHATSAPP` in the script to Handup's number once there is one. It isn't served anywhere yet.
+- **Landing page:** `landing/index.html` is the draft page: one file, a WhatsApp chat in a phone that plays out as you scroll, from being laid off to the list, the message to paste and a friend's offer ticked off, in the agent's real message shapes from `docs/agent-prompt.md`. The conversation is the plain text block near the bottom of the file, one line per message. The look is the Creation of Adam: fresco plaster, and on wide screens the two reaching hands (`landing/hand-adam.jpg`, `landing/hand-god.jpg`, cropped from the public-domain fresco) sit either side of the phone. Set `WHATSAPP` in the script to Handup's number once there is one. It isn't served anywhere yet.
 
 Shared 40 for 40 context lives in `../AGENTS.md`.
 
@@ -14,15 +14,15 @@ Yesterday, while we were building Poppy, my wife called me unexpectedly. The ent
 
 ## Direction
 
-Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think a laptop, Wi-Fi, a desk to work from, or a month of a subscription paid for. Help in kind comes first, because that's the spirit of it. Money is allowed as a second or third choice: if a friend says "I haven't got a spare laptop, but here's £500 to buy one", that's fine and the item counts as sorted. Handup never holds or moves money itself, so the cash goes straight between the friend and the person, with no pooled funds and no payments through Handup.
+Handup is a "laid-off wedding list": a list of in-kind support that someone who just lost their job can share with friends and family, who pick things off it. Think the loan of a laptop, a desk to work from, a lift to an interview or a practice interview. No money is exchanged in the MVP: nothing is paid through Handup, and nothing on a list is something a friend has to buy or pay for. So no pooled funds, donations, payments, bills or subscriptions. If a friend sends money anyway, that is between the two of them: the agent ticks the item off if the person says it's covered, keeps amounts out of everything, and never turns it into an ask.
 
 **Who it's for:** mid-career people with real outgoings (a mortgage, kids) who are new to AI, from the day they're laid off to about two weeks later. That's when they're in shock and need practical help fast, like cutting outgoings and keeping a laptop and a place to work.
 
 **How it works:**
 
 - The user talks to an AI agent in a chat app. The agent builds their list with them, starting from a starter pack of about 10 common things.
-- The list itself is a web page. The agent gives the user a link or a ready-made message to forward to friends, family and groups.
-- Updates come back the same way: the user forwards messages to the agent, and it updates the list.
+- There is no web list in the MVP. The list lives in the chat. The agent gives the user a ready-made message to copy and paste to friends, family and groups.
+- Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off, gives them a short thank-you to paste and offers one next ask. It doesn't send the whole list again after every tick.
 - The landing page just shows the chat flow.
 
 **MVP:**
