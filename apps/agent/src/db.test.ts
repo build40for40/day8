@@ -7,6 +7,7 @@ import * as db from "./db";
 function fakeD1(): D1Database {
   const sqlite = new DatabaseSync(":memory:");
   sqlite.exec(readFileSync("migrations/0001_init.sql", "utf8"));
+  sqlite.exec(readFileSync("migrations/0003_offers.sql", "utf8"));
   const statement = (sql: string, params: never[] = []) => {
     const execute = async () =>
       /^\s*select/i.test(sql)
@@ -57,4 +58,21 @@ test("ticking the same item again in one turn keeps one claim, and a second item
   expect(await db.addClaim(d1, listId, 1, claim, TURN)).toBe(true);
   const items = await db.getItems(d1, listId);
   expect(items.map((item) => item.claims.length)).toEqual([1, 1]);
+});
+
+test("an item takes one offer at a time, and a no opens it up again", async () => {
+  const first = await db.addOffer(d1, listId, 2, "Sam");
+  expect(first).toMatchObject({ ok: true, text: "A desk to work from" });
+  expect(await db.addOffer(d1, listId, 2, "Priya")).toEqual({ ok: false, reason: "taken" });
+  expect((await db.getItems(d1, listId))[1].offer?.helper_first_name).toBe("Sam");
+
+  expect(await db.resolveOffer(d1, listId, 2, "declined")).toBe(true);
+  expect((await db.getItems(d1, listId))[1].offer).toBeNull();
+  expect(await db.addOffer(d1, listId, 2, "Priya")).toMatchObject({ ok: true });
+});
+
+test("an offer on a ticked or missing item is turned away", async () => {
+  await db.setItemStatus(d1, listId, 1, "covered");
+  expect(await db.addOffer(d1, listId, 1, "Sam")).toEqual({ ok: false, reason: "gone" });
+  expect(await db.addOffer(d1, listId, 99, "Sam")).toEqual({ ok: false, reason: "gone" });
 });

@@ -102,11 +102,14 @@ function allowedOrigin(request: Request, env: Env): string | null {
   return env.WEB_CHAT_DEV_ORIGIN && origin === env.WEB_CHAT_DEV_ORIGIN ? origin : null;
 }
 
-async function visitorKey(request: Request, now: number): Promise<string> {
+export async function visitorHash(request: Request): Promise<string> {
   const ip = request.headers.get("cf-connecting-ip") ?? "unknown";
   const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(ip));
-  const hash = [...new Uint8Array(digest).slice(0, 16)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
-  return `ip:${hash}:${Math.floor(now / HOUR_MS)}`;
+  return [...new Uint8Array(digest).slice(0, 16)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function visitorKey(request: Request, now: number): Promise<string> {
+  return `ip:${await visitorHash(request)}:${Math.floor(now / HOUR_MS)}`;
 }
 
 export async function handleWebChat(

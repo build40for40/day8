@@ -1,6 +1,6 @@
 import type { InboundMessage } from "./channel";
 import { nextItemNumber } from "./list";
-import type { Claim, Item, ListRow, StoredMessage, User } from "./types";
+import type { Claim, Item, ListRow, Offer, StoredMessage, User } from "./types";
 
 const now = () => new Date().toISOString();
 
@@ -96,16 +96,22 @@ export async function createListWithItems(db: D1Database, userId: number, texts:
 }
 
 export async function getItems(db: D1Database, listId: number): Promise<Item[]> {
-  const [items, claims] = await db.batch<Record<string, unknown>>([
+  const [items, claims, offers] = await db.batch<Record<string, unknown>>([
     db.prepare("SELECT id, number, text, why, status FROM items WHERE list_id = ? ORDER BY number").bind(listId),
     db
       .prepare(
         "SELECT c.item_id, c.helper_first_name, c.show_name, c.said, c.source, c.claimed_at FROM claims c JOIN items i ON i.id = c.item_id WHERE i.list_id = ? ORDER BY c.id",
       )
       .bind(listId),
+    db
+      .prepare(
+        "SELECT o.id, o.item_id, o.helper_first_name, o.notified_at, o.created_at FROM offers o JOIN items i ON i.id = o.item_id WHERE i.list_id = ? AND o.status = 'pending'",
+      )
+      .bind(listId),
   ]);
   return items.results.map((row) => ({
-    ...(row as unknown as Omit<Item, "claims">),
+    ...(row as unknown as Omit<Item, "claims" | "offer">),
+    offer: (offers.results.find((offer) => offer.item_id === row.id) as unknown as Offer | undefined) ?? null,
     claims: claims.results
       .filter((claim) => claim.item_id === row.id)
       .map((claim) => ({ ...(claim as unknown as Claim), show_name: claim.show_name === 1 })),
@@ -204,6 +210,60 @@ export async function addClaim(
   return true;
 }
 
+export async function lastInboundAt(db: D1Database, userId: number): Promise<string | null> {
+  const row = await db
+    .prepare("SELECT MAX(sent_at) AS at FROM messages WHERE user_id = ? AND direction = 'in'")
+    .bind(userId)
+    .first<{ at: string | null }>();
+  return row?.at ?? null;
+}
+
+export function getUserById(db: D1Database, id: number): Promise<User | null> {
+  return db.prepare("SELECT * FROM users WHERE id = ?").bind(id).first<User>();
+}
+
+export type OfferResult = { ok: true; offerId: number; text: string } | { ok: false; reason: "gone" | "taken" };
+
+export async function addOffer(db: D1Database, listId: number, number: number, helper: string): Promise<OfferResult> {
+  const item = await db
+    .prepare("SELECT id, text FROM items WHERE list_id = ? AND number = ? AND status = 'open'")
+    .bind(listId, number)
+    .first<{ id: number; text: string }>();
+  if (!item) return { ok: false, reason: "gone" };
+  const insert = await db
+    .prepare("INSERT OR IGNORE INTO offers (item_id, helper_first_name, created_at) VALUES (?, ?, ?)")
+    .bind(item.id, helper, now())
+    .run();
+  if (insert.meta.changes === 0) return { ok: false, reason: "taken" };
+  const offer = await db
+    .prepare("SELECT id FROM offers WHERE item_id = ? AND status = 'pending'")
+    .bind(item.id)
+    .first<{ id: number }>();
+  await eventStatement(db, listId, "offer_added", { number }).run();
+  return { ok: true, offerId: offer!.id, text: item.text };
+}
+
+export async function markOfferNotified(db: D1Database, offerId: number): Promise<void> {
+  await db.prepare("UPDATE offers SET notified_at = ? WHERE id = ?").bind(now(), offerId).run();
+}
+
+export async function resolveOffer(
+  db: D1Database,
+  listId: number,
+  number: number,
+  status: "confirmed" | "declined",
+): Promise<boolean> {
+  const update = await db
+    .prepare(
+      "UPDATE offers SET status = ?, resolved_at = ? WHERE status = 'pending' AND item_id IN (SELECT id FROM items WHERE list_id = ? AND number = ?)",
+    )
+    .bind(status, now(), listId, number)
+    .run();
+  if (update.meta.changes === 0) return false;
+  await eventStatement(db, listId, `offer_${status}`, { number }).run();
+  return true;
+}
+
 export async function saveNotes(db: D1Database, user: User, notes: string, newCursor: number): Promise<void> {
   await db.batch([
     db
@@ -219,6 +279,11 @@ export async function setDeleteRequested(db: D1Database, userId: number, message
 
 export async function deleteEverything(db: D1Database, userId: number): Promise<void> {
   await db.batch([
+    db
+      .prepare(
+        "DELETE FROM offers WHERE item_id IN (SELECT i.id FROM items i JOIN lists l ON l.id = i.list_id WHERE l.user_id = ?)",
+      )
+      .bind(userId),
     db
       .prepare(
         "DELETE FROM claims WHERE item_id IN (SELECT i.id FROM items i JOIN lists l ON l.id = i.list_id WHERE l.user_id = ?)",
@@ -240,6 +305,7 @@ export async function appendNote(db: D1Database, userId: number, notes: string):
 export async function resetList(db: D1Database, listId: number, texts: string[]): Promise<void> {
   const at = now();
   await db.batch([
+    db.prepare("DELETE FROM offers WHERE item_id IN (SELECT id FROM items WHERE list_id = ?)").bind(listId),
     db.prepare("DELETE FROM claims WHERE item_id IN (SELECT id FROM items WHERE list_id = ?)").bind(listId),
     db.prepare("DELETE FROM items WHERE list_id = ?").bind(listId),
     db.prepare("UPDATE lists SET created_at = ? WHERE id = ?").bind(at, listId),

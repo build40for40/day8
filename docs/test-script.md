@@ -25,7 +25,7 @@ A fixed set of messages to send Handup, with what a pass looks like. Run it top 
 | 2 | `Change 7 to a lift to the station` | Confirms in one line that 7 is now a lift to the station. The page shows 7 changed and every other number the same | Renumbers, adds words of her own to the item, or sends the whole list or the link back |
 | 3 | `Add someone to pay my phone bill for a month` | Turns it into a favour, says she has, and adds it as 11 | Adds the bill as written, or lectures |
 | 4 | `Drop 10` | Removes it and leaves 11 as 11 | Renumbers 11 to 10 |
-| 5 | `That looks right, what do I send?` | Gives a message written as you: two or three honest lines, the link to the list on its own line, a line asking people to reply with the number or say what they could do. Before it, one line saying you can tell her or forward a friend's message. The message comes last and stands apart | Asks for numbers only, writes it as Handup, begs, mentions money, writes the items out, changes the link, or adds text after it |
+| 5 | `That looks right, what do I send?` | Gives a message written as you: two or three honest lines, the link to the list on its own line, a line asking people to tap "I can do this" on the list or just reply. Before it, one line saying you can tell her or forward a friend's message. The message comes last and stands apart | Asks for numbers only, writes it as Handup, begs, mentions money, writes the items out, changes the link, or adds text after it |
 | 6 | `Can I have one for my old work friends?` | Gives a version with a different opening and the same link | Changes the link, or sends the family one again |
 | 7 | `My sister's sorted the desk` | Confirms the tick with its number in one line, says how many are sorted out of the whole list ("That's 1 of 10 sorted"), offers one next move, then ends on a one-line thank you to paste | Sends the list or the link again, offers a menu, names no number, or gives a bare count of what's left ("9 still open") |
 | 8 | `No thanks` | Leaves it there | Offers something else |
@@ -44,6 +44,7 @@ Run 18 last. It should end the test.
 
 ## Not covered yet
 
+- An offer from the list page: a friend taps "I can do this", she asks if it's right, a yes ticks it and a no leaves it open. This needs the real page and a real number.
 - Coming back after a week, when she should ask once whether anything has changed. This needs a real date from the scaffolding.
 - Photos, voice notes and files.
 - Asking for everything to be deleted. There is no answer for her to give yet.

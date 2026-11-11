@@ -23,7 +23,7 @@ async function receiveWebhook(request: Request, env: Env): Promise<Response> {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
     if (url.pathname === WEBHOOK_PATH) {
       if (request.method === "GET") return verifyChallenge(url, env.WHATSAPP_VERIFY_TOKEN);
@@ -31,7 +31,7 @@ export default {
       return new Response("Method not allowed", { status: 405 });
     }
     if (url.pathname === WEB_CHAT_PATH) return handleWebChat(request, env);
-    if (url.pathname.startsWith(LIST_PAGE_PATH)) return handleListPage(request, env);
+    if (url.pathname.startsWith(LIST_PAGE_PATH)) return handleListPage(request, env, (work) => ctx.waitUntil(work));
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;

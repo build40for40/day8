@@ -19,8 +19,9 @@ Notes from earlier chats: <short notes, or "none">
 ```
 
 - **Today's date and the list's start date are required.** The prompt asks once whether anything has changed when the list is more than a week old. Dates are Europe/London.
-- **The list page line is the person's own link** to the read-only web page of their list. It is left out where there is no page, as in the landing page's live chat.
+- **The list page line is the person's own link** to the web page of their list. It is left out where there is no page, as in the landing page's live chat.
 - **Every item keeps its number for life.** A ticked or removed item never frees its number, and a new item takes the next unused one.
+- **An offer from the list page shows on its item,** as `[open, Sam offered on the list page 12 Nov, you've asked them, waiting for their yes or no]`, or `they haven't been told yet` if the message didn't get through.
 - **First names only** for helpers, and only if the person said yes to showing them.
 
 ## 2. Seed the starter list before the first reply
@@ -37,6 +38,7 @@ The first reply must be the ten favours, with no questions first. Create the per
 | `remove_item(number)` | Drops an item | The number is retired, not reused |
 | `tick_item(number, helper)` | Marks it covered | `helper` is a first name or empty |
 | `reopen_item(number)` | Un-ticks it | For "that fell through" |
+| `decline_offer(number)` | Clears an offer made on the list page | The item stays open. A yes is `tick_item` |
 | `save_note(fact)` | Keeps one lasting fact about the person | One fact per call |
 | `reset_list` | Scraps the list and re-seeds the starter ten | For "start again" |
 
