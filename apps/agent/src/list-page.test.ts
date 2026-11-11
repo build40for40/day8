@@ -73,6 +73,15 @@ test("serves a live list at its link, uncached and unindexed", async () => {
   expect(await response.text()).toContain("A laptop to borrow");
 });
 
+test("an open page can ask when the list last changed, and carries the script that does", async () => {
+  const version = await handleListPage(new Request(`${listPageUrl(SLUG)}/v`), env);
+  expect(await version.text()).toBe("2026-11-11T14:02:00Z");
+
+  const response = await handleListPage(new Request(listPageUrl(SLUG)), env);
+  const nonce = response.headers.get("content-security-policy")?.match(/script-src 'nonce-(\w+)'/)?.[1];
+  expect(await response.text()).toContain(`<script nonce="${nonce}">`);
+});
+
 test("an unknown, taken down or malformed link gets the not-here page", async () => {
   vi.mocked(db.getLiveListBySlug).mockResolvedValue(null);
   const unknown = await handleListPage(new Request(listPageUrl(SLUG)), env);

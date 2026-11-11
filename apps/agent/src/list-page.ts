@@ -1,4 +1,4 @@
-import { LANDING_PATH, LIST_PAGE_PATH, OFFER_NAME_MAX_CHARS, SITE_ORIGIN } from "./config";
+import { LANDING_PATH, LIST_PAGE_PATH, LIVE_CHECK_MS, OFFER_NAME_MAX_CHARS, SITE_ORIGIN } from "./config";
 import * as db from "./db";
 import { handleOffer, type OfferNotice } from "./offers";
 import { ukDateTime } from "./time";
@@ -152,11 +152,29 @@ function itemRow(item: Item, slug: string): string {
   return `<li class="done">${number}<div class="t"><s>${escapeHtml(item.text)}</s><span class="by">${helper}</span>${when}</div></li>`;
 }
 
+// Keeps an open page current: asks for the time of the list's last change, and reloads when it moves.
+function liveScript(nonce: string, version: string): string {
+  return `<script nonce="${nonce}">(function () {
+  var seen = ${JSON.stringify(version)};
+  var path = location.pathname.replace(/\\/$/, "");
+  function check() {
+    if (document.hidden || document.querySelector("details[open]")) return;
+    fetch(path + "/v", { cache: "no-store" })
+      .then(function (r) { return r.ok ? r.text() : seen; })
+      .then(function (now) { if (now !== seen) location.replace(path); })
+      .catch(function () {});
+  }
+  setInterval(check, ${LIVE_CHECK_MS});
+  document.addEventListener("visibilitychange", check);
+})();</script>`;
+}
+
 export function renderListPage(
   items: Item[],
   lastChange: string | null,
   slug: string,
   notice: OfferNotice | null = null,
+  nonce: string | null = null,
 ): string {
   const live = items.filter((item) => item.status !== "removed");
   const stillOpen = live.filter((item) => item.status === "open");
@@ -194,7 +212,8 @@ ${how}
 <footer>
 ${lastChange ? `<p>Last changed ${escapeHtml(ukDateTime(lastChange))}, UK time.</p>` : ""}
 <p>Kept up to date by <a href="${LANDING_PATH}">Handup</a>, day 8 of 40 for 40.</p>
-</footer>`,
+</footer>
+${nonce ? liveScript(nonce, lastChange ?? "") : ""}`,
   );
 }
 
@@ -210,7 +229,7 @@ export function renderMissingPage(): string {
   );
 }
 
-function html(body: string, status: number): Response {
+function html(body: string, status: number, nonce: string | null = null): Response {
   return new Response(body, {
     status,
     headers: {
@@ -220,7 +239,8 @@ function html(body: string, status: number): Response {
       "referrer-policy": "same-origin",
       "x-content-type-options": "nosniff",
       "content-security-policy":
-        "default-src 'none'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: " +
+        `default-src 'none'; ${nonce ? `script-src 'nonce-${nonce}'; connect-src 'self'; ` : ""}` +
+        "style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src data: " +
         `${SITE_ORIGIN}; base-uri 'none'; form-action 'self'; frame-ancestors 'none'`,
     },
   });
@@ -234,16 +254,23 @@ export async function handleListPage(
   const url = new URL(request.url);
   const [slug, action, ...rest] = url.pathname.slice(LIST_PAGE_PATH.length).replace(/\/$/, "").split("/");
   const isOffer = action === "offer" && rest.length === 0;
-  if (action !== undefined && !isOffer) return html(renderMissingPage(), 404);
+  const isVersion = action === "v" && rest.length === 0;
+  if (action !== undefined && !isOffer && !isVersion) return html(renderMissingPage(), 404);
   const allowed = isOffer ? request.method === "POST" : request.method === "GET" || request.method === "HEAD";
   if (!allowed) return new Response("Method not allowed", { status: 405 });
 
   const list = SLUG.test(slug) ? await db.getLiveListBySlug(env.DB, slug) : null;
   if (!list) return html(renderMissingPage(), 404);
   if (isOffer) return handleOffer(request, env, list, { defer });
+  if (isVersion) {
+    return new Response((await db.lastListChange(env.DB, list.id)) ?? "", {
+      headers: { "content-type": "text/plain; charset=utf-8", "cache-control": "no-store", "x-robots-tag": "noindex, nofollow" },
+    });
+  }
 
   const [items, lastChange] = await Promise.all([db.getItems(env.DB, list.id), db.lastListChange(env.DB, list.id)]);
   const r = url.searchParams.get("r");
   const notice = r !== null && Object.hasOwn(NOTICES, r) ? (r as OfferNotice) : null;
-  return html(renderListPage(items, lastChange, list.slug, notice), 200);
+  const nonce = crypto.randomUUID().replaceAll("-", "");
+  return html(renderListPage(items, lastChange, list.slug, notice, nonce), 200, nonce);
 }
