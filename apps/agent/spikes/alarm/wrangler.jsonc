@@ -1,0 +1,10 @@
+{
+  "name": "handup-alarm-spike",
+  "account_id": "9b4d3e616e55585a0ae844f424717b43",
+  "compatibility_date": "2026-10-01",
+  "main": "./index.js",
+  "vars": { "UPSTREAM": "http://127.0.0.1:8803" },
+  "durable_objects": { "bindings": [{ "name": "SPIKE", "class_name": "AlarmSpike" }] },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["AlarmSpike"] }],
+  "workers_dev": true
+}

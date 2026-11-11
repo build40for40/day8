@@ -1,0 +1,8 @@
+{
+  "name": "@handup/web",
+  "private": true,
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "python3 -m http.server 4318"
+  }
+}
