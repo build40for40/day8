@@ -150,10 +150,6 @@
   .msg.paste { background: var(--paste); border: 1px dashed var(--paste-line); }
   .paste .label { display: flex; align-items: center; gap: 6px; font-family: var(--caps); font-size: 10.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   .paste .label svg { width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 2; }
-  .preview { display: flex; gap: 9px; align-items: center; margin-top: 9px; padding: 7px; border-radius: 7px; background: var(--chat-bg); border-left: 3px solid var(--cloak); }
-  .preview .thumb { width: 44px; height: 44px; flex: none; border-radius: 5px; background: url("hand-god.jpg") 0% 46% / 260% auto, var(--page); }
-  .preview b { display: block; font-size: 13.5px; }
-  .preview small { display: block; font-size: 12px; color: var(--chat-soft); overflow-wrap: anywhere; }
   .fwd { display: flex; align-items: center; gap: 4px; font-size: 12.5px; font-style: italic; color: var(--chat-soft); margin-bottom: 3px; }
   .fwd svg { width: 13px; height: 13px; fill: currentColor; }
   .who { font-size: 12.5px; font-weight: 700; color: var(--cloak); }
@@ -237,7 +233,6 @@
     paste: text          the small label on top, such as "For the family group"
     > text               a paragraph of the message, written as the person
     1. text              an item still open
-    link: text | url     a link preview to the list: its title, then the address
 
   A list or a paste ends at the next line that isn't one of its parts. Empty lines are fine anywhere.
   Wrap words in *stars* to make them bold.
@@ -249,93 +244,88 @@ time: 10:30
 big: When the job goes, let your people *reach back*.
 handup: This is Jess. Her whole studio closed this morning, no warning. Scroll to see what happened.
 
-# 1. The list. Handup gives before it asks, so ten things come first, with no questions
+# 1. The list. Handup gives before it asks, so ten favours come first, with no questions. Nothing on it is bought
 time: 10:41
 me: I've just been laid off. The whole company. Everyone keeps saying "let me know if I can help" and I don't know what to tell them.
-handup: I'm sorry, Jess. That's a brutal morning. Let's give them something to say yes to.
 
-list: Here's a list of ten things people can actually do. It's yours now.
+list: I'm Handup, and I'm sorry, Jess. Here are ten things people can actually do. It's your list now.
 1. A laptop to borrow, if the work one has to go back
-2. Wi-Fi or a phone contract covered for a month
-3. A desk or a quiet place to work a few days a week
-4. A month of a subscription I need for the job hunt
-5. Someone who hires to look over my CV
-6. A practice interview
-7. Childcare for a few hours on interview days
-8. A cooked meal or a food shop
-9. A train ticket to an interview
-10. An hour with someone good with money, going through outgoings
-last: Change, swap or drop any of them by number, or add your own.
+2. A desk or a quiet spot with good Wi-Fi, a few days a week
+3. Someone who hires to look over my CV
+4. A practice interview
+5. A written recommendation from someone I've worked with
+6. Childcare for a few hours on interview days
+7. A lift to an interview
+8. A home-cooked meal dropped round
+9. An hour with someone good with money, going through outgoings
+10. A walk and a chat, to get out of the house
+last: Change, swap or drop any of them by number, like "change 7 to a lift to the station", or add your own.
 
 # 2. The edit. By number, and Handup makes it specific itself
 time: 10:44
-me: 4 is Adobe, mine runs out Friday. And change 7 to someone having the kids on Thursday afternoon.
+me: The laptop goes back Friday. And 6 is really just the kids on Thursday afternoon.
 
 list: Done. Here it is as it stands.
-1. A laptop to borrow, if the work one has to go back
-2. Wi-Fi or a phone contract covered for a month
-3. A desk or a quiet place to work a few days a week
-4. A month of Adobe, so I can keep my portfolio going
-5. Someone who hires to look over my CV
-6. A practice interview
-7. Someone to have the kids on Thursday afternoon
-8. A cooked meal or a food shop
-9. A train ticket to an interview
-10. An hour with someone good with money, going through outgoings
+1. A laptop to borrow, the work one goes back Friday
+2. A desk or a quiet spot with good Wi-Fi, a few days a week
+3. Someone who hires to look over my CV
+4. A practice interview
+5. A written recommendation from someone I've worked with
+6. Someone to have the kids on Thursday afternoon
+7. A lift to an interview
+8. A home-cooked meal dropped round
+9. An hour with someone good with money, going through outgoings
+10. A walk and a chat, to get out of the house
 last: Say when it looks right and I'll write the message to send.
 
-# 3. The share. Written as Jess, set apart so she can copy it in one go. She forwards it, Handup never posts
+# 3. The share. Written as Jess, set apart so she can copy it in one go. She pastes it, Handup never posts
 time: 10:46
 me: Looks right. What do I send?
-handup: Here you go. Paste it into the family group as it is. Want a version for old colleagues too?
+handup: Here you go. Paste it into the family group as it is.
 
 paste: For the family group
 > Hi all. The studio closed this morning, all of us at once, so I'm out of work as of today. Lots of you have asked what you can do, so here's what would genuinely help.
-1. A laptop to borrow
-2. Wi-Fi or a phone contract for a month
-3. A desk a few days a week
-4. A month of Adobe
-5. A CV look-over from someone who hires
-6. A practice interview
-7. The kids on Thursday afternoon
-8. A cooked meal or a food shop
-9. A train ticket to an interview
-10. An hour going through outgoings
+1. A laptop to borrow, mine goes back Friday
+2. A desk with good Wi-Fi, a few days a week
+3. A CV look-over from someone who hires
+4. A practice interview
+5. A written recommendation
+6. The kids on Thursday afternoon
+7. A lift to an interview
+8. A home-cooked meal
+9. An hour going through outgoings
+10. A walk and a chat
 > Just reply with the number you can cover. Thank you x
-link: Jess's Handup list | build40for40.com/handup/l/jess-k3
 
 --- That evening
 
-# 4. The update. A friend replies in the group, Jess forwards it, Handup ticks it off
+# 4. A tick. Uncle Rob has no laptop and sends money instead. Handup ticks it off and keeps the amount out of everything
 time: 18:12
-fwd: Auntie Bev: I've got a laptop sat doing nothing. It's yours as long as you need it, love x
-handup: Ticked off 1, the laptop, from Bev. Want a one-line thank you for her?
-me: Yes please
+fwd: Uncle Rob: Haven't got a spare laptop, love, but I've sent you something to get one. Don't argue x
+handup: Ticked off 1, the laptop, from Rob. 9 still open.
 
-paste: For Bev
-> Bev, you're a star. The laptop means I can start applying tomorrow. Thank you x
+paste: For the family group
+> The laptop's sorted, thank you Rob x
+
+# 5. One next move, never a menu
+handup: Who do you know who hires? I can write a message just for them, for number 3.
+me: My old boss, Sam.
+
+paste: For Sam
+> Hi Sam. You'll have heard about the studio. Would you look over my CV this week? Half an hour would make a real difference. No worries if not.
 
 time: 19:30
-fwd: Sam: Our office has a spare desk Tues to Thurs. Come in whenever, I'll sort you a pass.
+fwd: Sam: Of course. Send it over, and come in Thursday, we've got a spare desk too.
+handup: Ticked off 3 and 2, the CV and the desk, both from Sam. 7 still open.
 
-list: Ticked off 3, the desk, from Sam. Two down.
-+1. A laptop to borrow | Bev
-2. Wi-Fi or a phone contract covered for a month
-+3. A desk or a quiet place to work a few days a week | Sam
-4. A month of Adobe, so I can keep my portfolio going
-5. Someone who hires to look over my CV
-6. A practice interview
-7. Someone to have the kids on Thursday afternoon
-8. A cooked meal or a food shop
-9. A train ticket to an interview
-10. An hour with someone good with money, going through outgoings
-last: Numbers stay put, so "7" still means the kids. Want a fresh message for the group, with what's still open?
+paste: For Sam
+> Thank you Sam. CV's on its way, see you Thursday.
 
-me: Tomorrow. Tonight I'm ringing Bev.
+me: Tomorrow I'm ringing Rob.
 handup: Good call. I'll be here.
 
 # The ending
-handup: That's me. A list of things, favours and time. You forward, I keep count.
+handup: That's me. A list of favours, in your chat. You paste, I keep count.
 handup: Sent a list by someone you love? Just reply to them with the number you can cover.
 </script>
 
@@ -387,8 +377,7 @@ handup: Sent a list by someone you love? Just reply to them with the number you 
         if (p.items) return '<div class="p list">' + p.items.map(item).join('') + '</div>';
         return para(rich(p.text, 'strong'));
       }).join('');
-      var link = b.link ? '<div class="preview"><span class="thumb" aria-hidden="true"></span><div><b>' + esc(b.link[0]) + '</b><small>' + esc(b.link[1] || '') + '</small></div></div>' : '';
-      add('them', '<div class="label">' + copyIcon + 'Ready to paste &middot; ' + esc(b.name) + '</div>' + body + link, 'paste');
+      add('them', '<div class="label">' + copyIcon + 'Ready to paste &middot; ' + esc(b.name) + '</div>' + body, 'paste');
     }
   }
   function parseItem(line) {
@@ -410,7 +399,6 @@ handup: Sent a list by someone you love? Just reply to them with the number you 
     }
     if (block && block.kind === 'paste') {
       if ((m = line.match(/^>\s*(.*)$/))) { block.parts.push({ text: m[1] }); return; }
-      if ((m = line.match(/^link:\s*(.+)$/i))) { block.link = m[1].split('|').map(function (s) { return s.trim(); }); return; }
       if ((it = parseItem(line))) {
         var tail = block.parts[block.parts.length - 1];
         if (!tail || !tail.items) block.parts.push(tail = { items: [] });
