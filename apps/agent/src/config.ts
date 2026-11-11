@@ -11,7 +11,9 @@ export const DAILY_MESSAGE_CAP = 100;
 
 export const PASTE_MARKER = "---PASTE---";
 
-export const WHATSAPP_GRAPH_VERSION = "v21.0";
+export const TWILIO_MAX_CHARS = 1_600;
+export const TWILIO_SEND_GAP_MS = 3_100;
+export const TWILIO_MAX_WEBHOOK_CHARS = 64_000;
 
 export const WEBHOOK_PATH = "/handup/webhook";
 
