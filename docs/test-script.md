@@ -8,6 +8,7 @@ A fixed set of messages to send Handup, with what a pass looks like. Run it top 
 2. Send each line as written. Don't help her along.
 3. Mark each one pass or fail in the results table at the bottom. For a fail, copy what she said.
 4. Two fails on the same rule means the prompt changes, not the test.
+5. Write the run up from `docs/test-runs/TEMPLATE.md`, then log every fail and note in `docs/feedback.md`. That file says how we decide what changes.
 
 ## Every reply, whatever the test
 

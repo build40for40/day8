@@ -42,6 +42,7 @@ The agent's aim, the user story and the system prompt are in `docs/agent-prompt.
 
 - `docs/agent-needs.md`: what the agent needs from scaffolding (the block that goes in with every message, the actions she takes on the list, the shape of her reply). The tools in `apps/agent/src/tools.ts` use its names.
 - `docs/test-script.md`: the fixed messages to send her and what a pass looks like.
+- `docs/feedback.md`: every piece of feedback on how she talks, what was decided and whether the fix held. The prompt only changes through a row there. Each run is written up in `docs/test-runs/` from `TEMPLATE.md`.
 
 ## Layout
 
