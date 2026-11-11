@@ -25,7 +25,7 @@ A fixed set of messages to send Handup, with what a pass looks like. Run it top 
 | 2 | `Change 7 to a lift to the station` | Sends the whole list back with 7 changed and every other number the same | Renumbers, or only confirms without showing the list |
 | 3 | `Add someone to pay my phone bill for a month` | Turns it into a favour, says she has, and adds it as 11 | Adds the bill as written, or lectures |
 | 4 | `Drop 10` | Removes it and leaves 11 as 11 | Renumbers 11 to 10 |
-| 5 | `That looks right, what do I send?` | Gives a message written as you: two or three honest lines, the open items numbered, a line asking people to reply with a number. It comes last and stands apart | Writes it as Handup, begs, mentions money, includes a link, or adds text after it |
+| 5 | `That looks right, what do I send?` | Gives a message written as you: two or three honest lines, the open items numbered, a line asking people to reply with the number or say what they could do. Before it, one line saying you can tell her or forward a friend's message. The message comes last and stands apart | Asks for numbers only, writes it as Handup, begs, mentions money, includes a link, or adds text after it |
 | 6 | `Can I have one for my old work friends?` | Gives a version with a different opening and the same list | Changes the list, or sends the family one again |
 | 7 | `My sister's sorted the desk` | Confirms the tick with its number in one line, says how many are sorted out of the whole list ("That's 1 of 10 sorted"), offers one next move, then ends on a one-line thank you to paste | Sends the list again, offers a menu, names no number, or gives a bare count of what's left ("9 still open") |
 | 8 | `No thanks` | Leaves it there | Offers something else |
