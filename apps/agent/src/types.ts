@@ -7,6 +7,7 @@ export interface Env {
   WHATSAPP_ACCESS_TOKEN?: string;
   WHATSAPP_APP_SECRET?: string;
   WHATSAPP_VERIFY_TOKEN?: string;
+  WEB_CHAT_DEV_ORIGIN?: string;
 }
 
 export interface User {

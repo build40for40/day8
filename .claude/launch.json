@@ -1,6 +1,7 @@
 {
   "version": "0.0.1",
   "configurations": [
-    { "name": "landing", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4318", "--directory", "apps/web"], "port": 4318 }
+    { "name": "landing", "runtimeExecutable": "python3", "runtimeArgs": ["-m", "http.server", "4318", "--directory", "apps/web"], "port": 4318 },
+    { "name": "agent", "runtimeExecutable": "npm", "runtimeArgs": ["run", "dev"], "port": 8787 }
   ]
 }

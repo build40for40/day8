@@ -28,3 +28,9 @@ export function ukLongDate(iso: string): string {
     year: "numeric",
   }).format(new Date(iso));
 }
+
+export function ukDayKey(iso: string): string {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: UK, year: "numeric", month: "2-digit", day: "2-digit" }).format(
+    new Date(iso),
+  );
+}

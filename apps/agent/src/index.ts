@@ -1,6 +1,7 @@
-import { WEBHOOK_PATH } from "./config";
+import { WEB_CHAT_PATH, WEBHOOK_PATH } from "./config";
 import type { Env } from "./types";
 import type { UserTurn } from "./user-turn";
+import { handleWebChat } from "./web-chat";
 import { isSignatureValid, parseInbound, verifyChallenge } from "./whatsapp";
 
 export { UserTurn } from "./user-turn";
@@ -28,6 +29,7 @@ export default {
       if (request.method === "POST") return receiveWebhook(request, env);
       return new Response("Method not allowed", { status: 405 });
     }
+    if (url.pathname === WEB_CHAT_PATH) return handleWebChat(request, env);
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;
