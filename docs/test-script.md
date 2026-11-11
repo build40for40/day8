@@ -55,3 +55,4 @@ Run 18 last. It should end the test.
 | 11 Nov 2026 | A Claude agent playing Handup, one message at a time. Not the sandbox and not WhatsApp | 6 | 18 | None. Five notes in `docs/test-runs/2026-11-11-draft-6.md` | Claude, with Samira |
 | 11 Nov 2026 | The same way: a Claude agent playing Handup, one message at a time | 7 | 18 | None. All five draft 7 fixes held. Four notes in `docs/test-runs/2026-11-11-draft-7.md` | Claude, with Samira |
 | 11 Nov 2026 | The same way: a Claude agent playing Handup, one message at a time | 8 | 18 | None. All four draft 8 fixes held. Notes in `docs/test-runs/2026-11-11-draft-8-claude-agent.md` | Claude, with Samira |
+| 11 Nov 2026 | The same way: a Claude agent playing Handup, one message at a time | 9 | 18 | None on the script as it stood for draft 9. Overtaken by draft 10 while it ran. Notes in `docs/test-runs/2026-11-11-draft-9-claude-agent.md` | Claude, with Samira |
