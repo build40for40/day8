@@ -58,7 +58,7 @@ New Workers and web apps go in `apps/` as their own workspace.
 
 One Cloudflare Worker, a D1 database called `handup` and a Durable Object per phone number. The decisions are on Superthread card 273. Paths below are inside `apps/agent`.
 
-- **In:** WhatsApp runs through Twilio (`src/twilio.ts`). Twilio posts each message to `/handup/webhook` as form fields. The Worker checks the `X-Twilio-Signature` and hands the message to that phone number's Durable Object (`src/user-turn.ts`).
+- **In:** WhatsApp posts to `/handup/webhook`. The Worker checks the signature and hands the message to that phone number's Durable Object (`src/user-turn.ts`).
 - **Turns:** the Durable Object runs one turn at a time from an alarm. Messages sent within 3 seconds of each other become one turn. A failed turn is retried up to three times, then the person gets one apology. A turn that already replied is never rerun.
 - **First message:** no model call. The Worker seeds the ten starter items and sends a template (`src/starter.ts`).
 - **Later turns:** Claude Opus 5.5 through the Vercel AI SDK (`src/agent.ts`). The model id and every tunable number live in `src/config.ts`.
@@ -67,20 +67,20 @@ One Cloudflare Worker, a D1 database called `handup` and a Durable Object per ph
 - **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped. There is no web page for the list in the MVP.
 - **No money, nothing private:** `src/guard.ts` strips amounts and refuses items with an amount, a phone number or an obvious address.
 - **Repeat safety:** adds and ticks are tied to the turn's first inbound message, so a retried turn can't apply them twice.
-- **Out:** a line with only `---PASTE---` splits the reply, so the message to paste arrives as its own chat bubble. Each bubble goes out through Twilio's Messages API, cut at a paragraph or line break if it passes 1,600 characters, with 3.1 seconds between sends so they arrive in order and stay inside the WhatsApp sandbox's limit.
+- **Out:** a line with only `---PASTE---` splits the reply, so the message to paste arrives as its own chat bubble.
 - **Deleting:** the person sends `/forget`, confirms once, and the Worker deletes everything it holds on them.
 - **Landing page chat:** `POST /handup/api/chat` (`src/web-chat.ts`) answers the page's live chat with a plain model call: no tools, nothing stored, the list lives in the turns the page sends. The Worker adds the prompt, an empty "What you know" block with the starter list, and the paste marker rule. It only answers `build40for40.com` pages (plus `WEB_CHAT_DEV_ORIGIN` locally), refuses over 40 turns or 2,000 characters in a user message, allows 30 messages an hour per IP address (429 after that), and after $10 of model spend in a UK day replies with a fixed "back tomorrow" line. The counters are rows in the D1 table `web_chat_counters`, with the IP address hashed.
-- **Channel:** WhatsApp through Twilio sits behind the small `Channel` interface in `src/channel.ts`, so iMessage could replace it.
+- **Channel:** WhatsApp sits behind the small `Channel` interface in `src/channel.ts`, so iMessage could replace it.
 - **Spikes:** `spikes/alarm` is the throwaway Worker that tested long alarms.
 
 ## Running it
 
 From the repo root:
 
-- `npm install`, then copy `apps/agent/.dev.vars.example` to `apps/agent/.dev.vars` and fill it in. With no Twilio secrets, replies are logged instead of sent. Twilio signs the URL it called, and `wrangler dev` shows the Worker the route's host instead, so to take signed webhooks locally set `PUBLIC_BASE_URL` to the address Twilio (or your test) used: the tunnel's address, or `http://localhost:8787`.
+- `npm install`, then copy `apps/agent/.dev.vars.example` to `apps/agent/.dev.vars` and fill it in. With no WhatsApp token, replies are logged instead of sent.
 - `npm run db:migrate` sets up the local database, and `npm run dev` starts the Worker.
 - `npm run dev:web` serves the landing page on port 4318.
 - `npm test` and `npm run typecheck` before you commit. Tests sit next to the file they cover.
 - Run wrangler from `apps/agent` as `npm run wrangler -- <args>`, never bare `npx wrangler`.
-- CI and deploys are one workflow, `.github/workflows/ci.yml`. Every pull request and push to `main` runs typecheck and tests on Node 22, and `main` requires that `test` check before a merge. A push to `main` that touches `apps/agent`, `docs/agent-prompt.md`, the root `package.json` or lockfile, or the workflow then applies the remote D1 migrations and deploys the Worker, one deploy at a time. It signs in with the org's `CLOUDFLARE_API_TOKEN` secret and sets the Worker's `ANTHROPIC_API_KEY` from the org secret on every deploy. The Twilio secrets (`TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN` and `TWILIO_WHATSAPP_FROM`, the sender written as `whatsapp:+` then the number) are set by hand with `npm run wrangler -- secret put <NAME>` and survive deploys. To deploy without a code change, run the CI workflow by hand on `main`.
+- CI and deploys are one workflow, `.github/workflows/ci.yml`. Every pull request and push to `main` runs typecheck and tests on Node 22, and `main` requires that `test` check before a merge. A push to `main` that touches `apps/agent`, `docs/agent-prompt.md`, the root `package.json` or lockfile, or the workflow then applies the remote D1 migrations and deploys the Worker, one deploy at a time. It signs in with the org's `CLOUDFLARE_API_TOKEN` secret and sets the Worker's `ANTHROPIC_API_KEY` from the org secret on every deploy. The WhatsApp secrets are set by hand with `npm run wrangler -- secret put <NAME>` and survive deploys. To deploy without a code change, run the CI workflow by hand on `main`.
 - If the migration file changes before the first deploy, delete `apps/agent/.wrangler/state` and run `npm run db:migrate` again.
