@@ -51,4 +51,4 @@ Run 18 last. It should end the test.
 
 | Date | Where | Draft | Passes | Fails (test numbers) | Run by |
 |---|---|---|---|---|---|
-| | | | | | |
+| 11 Nov 2026 | A Claude agent playing Handup, one message at a time. Not the sandbox and not WhatsApp | 6 | 18 | None. Five notes in `docs/test-runs/2026-11-11-draft-6.md` | Claude, with Samira |
