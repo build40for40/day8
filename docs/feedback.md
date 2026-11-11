@@ -41,7 +41,7 @@ Then say where the fix goes. It is not always the prompt.
 
 Three more rules:
 
-- **Samira signs off every prompt change.** Anyone can log and propose. The Decision cell names who decided.
+- **Anyone on the team can change the prompt.** Log a row first, so the change has a reason. The Decision cell names who decided.
 - **Every fix gets a test.** If a row is fixed in the prompt or the code and no test in the script would catch it coming back, add one.
 - **One draft per batch.** Don't change the prompt in the middle of a run, and don't change two drafts' worth without a rerun in between.
 
@@ -85,3 +85,4 @@ Status is one of: **Open** (not decided), **Decided** (waiting for a draft), **I
 | 24 | 11 Nov, draft 8 run | Handup's own gap | "Only what is still open the first time it goes to a group" doesn't say what a later group sees once items are ticked. Not tested yet | | Open. For Samira |
 | 25 | 11 Nov, draft 8 run, test 16 | Handup's own gap | Asked straight out for a link, "never offer or mention one" makes a plain no awkward. She said no without the word | | Open |
 | 26 | 11 Nov, drafts 2 to 8 | Handup's own gap | The prompt says "tell them how" to delete and has no how. The Worker now tells her about `/forget` in what she knows | | Open. Check on the Worker |
+| 27 | 11 Nov, draft 8 | Lawrence | People arrive in shock. A one-sentence hello straight into ten items is a lot to take in, and doesn't say the list is for friends and family | Prompt and code. The hello starts with a word of care and "none of this needs doing today", says who the list is for, and ends "I'll be here when you come back". Three WhatsApp bubbles (`starter.ts`). Replaces row 13. Lawrence, signed off by Samira | In draft 9 |
