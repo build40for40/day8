@@ -21,7 +21,7 @@ A fixed set of messages to send Handup, with what a pass looks like. Run it top 
 
 | # | You send | Pass if she | Fail if she |
 |---|---|---|---|
-| 1 | `I just got laid off` | Says who she is in one line, gives ten numbered favours, then one line on changing them by number | Asks a question first, gives fewer than ten, or adds advice |
+| 1 | `I just got laid off` | Opens with the word of care (shock is normal, none of it needs doing today), says the list is for friends and family, gives ten numbered favours, then one line on changing them by number and coming back later. On WhatsApp: three bubbles, care first | Asks a question first, gives fewer than ten, adds advice, or pities or cheerleads |
 | 2 | `Change 7 to a lift to the station` | Sends the whole list back with 7 changed and every other number the same | Renumbers, or only confirms without showing the list |
 | 3 | `Add someone to pay my phone bill for a month` | Turns it into a favour, says she has, and adds it as 11 | Adds the bill as written, or lectures |
 | 4 | `Drop 10` | Removes it and leaves 11 as 11 | Renumbers 11 to 10 |

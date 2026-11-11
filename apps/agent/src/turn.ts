@@ -27,9 +27,11 @@ export async function runTurn(env: Env, channel: Channel, phone: string): Promis
   const pending = await db.pendingInbound(env.DB, user.id);
   if (pending.length === 0) return;
 
-  const send = async (text: string, userStillExists = true) => {
-    for (const part of splitReply(text)) await channel.send(phone, part);
-    if (userStillExists) await db.insertOutbound(env.DB, user.id, text);
+  // A string is split at the paste marker. An array is sent as given, one bubble each.
+  const send = async (text: string | string[], userStillExists = true) => {
+    const parts = Array.isArray(text) ? text : splitReply(text);
+    for (const part of parts) await channel.send(phone, part);
+    if (userStillExists) await db.insertOutbound(env.DB, user.id, Array.isArray(text) ? text.join("\n\n") : text);
   };
   const handled = () => db.markHandled(env.DB, pending.map((m) => m.id));
 
