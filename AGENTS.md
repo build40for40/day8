@@ -21,7 +21,7 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 
 - The user talks to an AI agent in a chat app. The agent builds their list with them, starting from a starter pack of about 10 common things.
 - There is no web list in the MVP. The list lives in the chat. The agent gives the user a ready-made message to copy and paste to friends, family and groups.
-- Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off and gives them a fresh message to paste.
+- Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off, gives them a short thank-you to paste and offers one next ask. It doesn't send the whole list again after every tick.
 - The landing page just shows the chat flow.
 
 **MVP:**
