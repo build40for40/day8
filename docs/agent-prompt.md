@@ -59,7 +59,7 @@ From the draft 7 run (11 Nov, `docs/test-runs/2026-11-11-draft-7.md`), new in dr
 
 Lawrence's feedback on the first message (11 Nov), new in draft 9:
 
-- People arrive in shock. The hello now starts with a word of care and tells them none of it needs doing today, explains that the list is for friends and family, and ends by saying she'll be there when they come back. On WhatsApp it arrives as three bubbles: the care, the list, then what to do next (row 21, replaces the one-sentence hello from row 13).
+- People arrive in shock. The hello now starts with a word of care and tells them none of it needs doing today, explains that the list is for friends and family, and ends by saying she'll be there when they come back. On WhatsApp it arrives as three bubbles: the care, the list, then what to do next (row 27, replaces the one-sentence hello from row 13).
 
 ## The system prompt (draft 9)
 

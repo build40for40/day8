@@ -41,7 +41,7 @@ Then say where the fix goes. It is not always the prompt.
 
 Three more rules:
 
-- **Samira signs off every prompt change.** Anyone can log and propose. The Decision cell names who decided.
+- **Anyone on the team can change the prompt.** Log a row first, so the change has a reason. The Decision cell names who decided.
 - **Every fix gets a test.** If a row is fixed in the prompt or the code and no test in the script would catch it coming back, add one.
 - **One draft per batch.** Don't change the prompt in the middle of a run, and don't change two drafts' worth without a rerun in between.
 
@@ -69,14 +69,20 @@ Status is one of: **Open** (not decided), **Decided** (waiting for a draft), **I
 | 8 | 11 Nov, draft 6 run | Script note | She named a place the prompt doesn't list | Prompt. Four places only. Samira | Held in draft 7 run, tests 11, 12 |
 | 9 | 11 Nov, drafts 2 to 6 | Script note, hand chat | Items read "their CV" to the person | Prompt. "Your" to them, "my" in messages to paste. Samira | Held in draft 7 run, tests 3, 5, 6, 13 |
 | 10 | 11 Nov, draft 6 run | Script note | She said a message had been sent when she had only written it | Prompt. Samira | Held in draft 7 run, tests 5, 17 |
-| 11 | 11 Nov, draft 7 run, tests 5, 6 | Script note | To keep "money" out of the message she reworded item 9 as "good with numbers", so the pasted list and the chat list differ | Prompt. Reword starter item 9, and a pasted list uses the chat list's words. Samira | In draft 8 |
-| 12 | 11 Nov, draft 7 run, tests 9, 10, 13 | Script note | She asked whether Dad's money covers the laptop three times | Prompt. Ask once, then leave it open. Samira | In draft 8 |
-| 13 | 11 Nov, draft 6 and 7 runs, test 1 | Script note | The hello is two sentences. The prompt asks for one line | Prompt. One short sentence. Samira | In draft 8 |
-| 14 | 11 Nov, draft 6 and 7 runs, test 2 | Script note | She added her own words to an edit: "a lift to the station" became "a lift to the station on interview days" | Prompt. A clear change goes in as said. Samira | In draft 8 |
+| 11 | 11 Nov, draft 7 run, tests 5, 6 | Script note | To keep "money" out of the message she reworded item 9 as "good with numbers", so the pasted list and the chat list differ | Prompt. Reword starter item 9, and a pasted list uses the chat list's words. Samira | Held in draft 8 run, tests 5, 6 |
+| 12 | 11 Nov, draft 7 run, tests 9, 10, 13 | Script note | She asked whether Dad's money covers the laptop three times | Prompt. Ask once, then leave it open. Samira | Held in draft 8 run, tests 9, 10, 13 |
+| 13 | 11 Nov, draft 6 and 7 runs, test 1 | Script note | The hello is two sentences. The prompt asks for one line | Prompt. One short sentence. Samira | Held in draft 8 run, test 1 |
+| 14 | 11 Nov, draft 6 and 7 runs, test 2 | Script note | She added her own words to an edit: "a lift to the station" became "a lift to the station on interview days" | Prompt. A clear change goes in as said. Samira | Held in draft 8 run, test 2 |
 | 15 | 11 Nov, draft 7 run, test 11 | Script note | The National Careers Service covers England only | | Open |
 | 16 | 11 Nov, draft 5 | Hand chat, Handup's own gap | "I have a laptop so something else" for item 1. The prompt says make a vague change specific, so she picked a new item herself (an introduction). Should she choose, or offer two? | | Open. For Samira |
 | 17 | 11 Nov, draft 5 | Hand chat, Handup's own gap | "A new outfit for an interview" with no "add". The first chat says don't ask first, Updates says offer to add. She added it as 11 without asking | | Open. For Samira |
 | 18 | 11 Nov, drafts 5 and 7 | Hand chat and draft 7 run, test 9 | "Dad sent me £200 for the outfit" was ticked straight off. "Dad sent me £200 for a laptop" got the does-that-cover-it question. "Only if it isn't clear" is read both ways | | Open. Seen twice |
-| 19 | 11 Nov, drafts 3 to 7 | Hand chat and runs | The thank-you says "thank you Dad" or "thank you to my sister". The prompt says first name only, and she doesn't know it | | Open. Seen twice |
+. In the draft 8 run (tests 7, 10, 14) she left the name off for the sister and used Priya and Ben without asking, because the reply shape leaves no room to ask | | Open. Seen three times |
 | 20 | 11 Nov, draft 5 | Hand chat, Handup's own gap | An item was added after the message had gone to the groups. Nothing says how the groups hear about the new item | | Open. For Samira |
-| 21 | 11 Nov, draft 8 | Lawrence | People arrive in shock. A one-sentence hello straight into ten items is a lot to take in, and doesn't say the list is for friends and family | Prompt and code. The hello starts with a word of care and "none of this needs doing today", says who the list is for, and ends "I'll be here when you come back". Three WhatsApp bubbles (`starter.ts`). Replaces row 13. Lawrence. Samira to sign off | In draft 9 |
+| 21 | 11 Nov, draft 8 run, tests 3, 5, 6 | Script note | "Pay my phone bill" became an item ending "so your phone costs you less", which then went into the message to paste as "costs me less". A favour, but it talks about cost | | Open |
+| 22 | 11 Nov, draft 8 run, test 14 | Script note, Handup's own gap | She handed over a progress message where the prompt says she can offer one, and it took the place of the thank-you and the next move. The prompt also says it can show the whole list, while a reply after a tick has no list | | Open. For Samira |
+| 23 | 11 Nov, draft 8 run, test 4 | Handup's own gap | Nothing says a dropped item's number is retired. She kept 11 as 11, which is what the Worker does | | Open |
+| 24 | 11 Nov, draft 8 run | Handup's own gap | "Only what is still open the first time it goes to a group" doesn't say what a later group sees once items are ticked. Not tested yet | | Open. For Samira |
+| 25 | 11 Nov, draft 8 run, test 16 | Handup's own gap | Asked straight out for a link, "never offer or mention one" makes a plain no awkward. She said no without the word | | Open |
+| 26 | 11 Nov, drafts 2 to 8 | Handup's own gap | The prompt says "tell them how" to delete and has no how. The Worker now tells her about `/forget` in what she knows | | Open. Check on the Worker |
+| 27 | 11 Nov, draft 8 | Lawrence | People arrive in shock. A one-sentence hello straight into ten items is a lot to take in, and doesn't say the list is for friends and family | Prompt and code. The hello starts with a word of care and "none of this needs doing today", says who the list is for, and ends "I'll be here when you come back". Three WhatsApp bubbles (`starter.ts`). Replaces row 13. Lawrence, signed off by Samira | In draft 9 |
