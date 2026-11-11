@@ -1,4 +1,5 @@
-import { TWILIO_MAX_WEBHOOK_CHARS, WEB_CHAT_PATH, WEBHOOK_PATH } from "./config";
+import { LIST_PAGE_PATH, TWILIO_MAX_WEBHOOK_CHARS, WEB_CHAT_PATH, WEBHOOK_PATH } from "./config";
+import { handleListPage } from "./list-page";
 import { emptyTwiml, isSignatureValid, parseInbound, signedUrlCandidates } from "./twilio";
 import type { Env } from "./types";
 import type { UserTurn } from "./user-turn";
@@ -33,6 +34,7 @@ export default {
       return new Response("Method not allowed", { status: 405 });
     }
     if (url.pathname === WEB_CHAT_PATH) return handleWebChat(request, env);
+    if (url.pathname.startsWith(LIST_PAGE_PATH)) return handleListPage(request, env);
     return new Response("Not found", { status: 404 });
   },
 } satisfies ExportedHandler<Env>;

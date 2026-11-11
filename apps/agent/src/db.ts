@@ -67,6 +67,18 @@ export function getListForUser(db: D1Database, userId: number): Promise<ListRow 
   return db.prepare("SELECT id, user_id, slug, status, created_at FROM lists WHERE user_id = ?").bind(userId).first<ListRow>();
 }
 
+export function getLiveListBySlug(db: D1Database, slug: string): Promise<ListRow | null> {
+  return db
+    .prepare("SELECT id, user_id, slug, status, created_at FROM lists WHERE slug = ? AND status = 'live'")
+    .bind(slug)
+    .first<ListRow>();
+}
+
+export async function lastListChange(db: D1Database, listId: number): Promise<string | null> {
+  const row = await db.prepare("SELECT MAX(created_at) AS at FROM events WHERE list_id = ?").bind(listId).first<{ at: string | null }>();
+  return row?.at ?? null;
+}
+
 export async function createListWithItems(db: D1Database, userId: number, texts: string[]): Promise<ListRow> {
   const slug = crypto.randomUUID().replaceAll("-", "").slice(0, 16);
   const at = now();

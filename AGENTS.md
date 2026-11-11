@@ -21,7 +21,8 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 **How it works:**
 
 - The user talks to an AI agent in a chat app. The agent builds their list with them, starting from a starter pack of about 10 common things.
-- There is no web list in the MVP. The list lives in the chat. The agent gives the user a ready-made message to copy and paste to friends, family and groups.
+- The list lives on a read-only web page at its own unguessable link, `build40for40.com/handup/l/<slug>`, so the person and their friends always see it as it stands. Nobody ticks anything off there.
+- The agent sends that link in place of writing the list out, and gives the user a ready-made message with the link in it to copy and paste to friends, family and groups.
 - Updates come back through the user: they tell the agent who has covered what, or forward it the message, and it ticks the item off, gives them a short thank-you to paste and offers one next ask. It doesn't send the whole list again after every tick.
 - The landing page just shows the chat flow.
 
@@ -60,11 +61,12 @@ One Cloudflare Worker, a D1 database called `handup` and a Durable Object per ph
 
 - **In:** WhatsApp runs through Twilio (`src/twilio.ts`). Twilio posts each message to `/handup/webhook` as form fields. The Worker checks the `X-Twilio-Signature` and hands the message to that phone number's Durable Object (`src/user-turn.ts`).
 - **Turns:** the Durable Object runs one turn at a time from an alarm. Messages sent within 3 seconds of each other become one turn. A failed turn is retried up to three times, then the person gets one apology. A turn that already replied is never rerun.
-- **First message:** no model call. The Worker seeds the ten starter items and sends a template (`src/starter.ts`).
+- **First message:** no model call. The Worker seeds the ten starter items and sends a template with the link to the list page (`src/starter.ts`).
 - **Later turns:** Claude Opus 5.5 through the Vercel AI SDK (`src/agent.ts`). The model id and every tunable number live in `src/config.ts`.
 - **What the model sees:** the system prompt, then the "What you know" block from `docs/agent-needs.md` (profile, dates, the list, notes), then every message after the user's cursor as plain text (`src/context.ts`).
 - **Memory:** the agent saves lasting facts with `save_note`. When the chat after the cursor passes 24,000 characters, a second model call folds the oldest half into the notes and moves the cursor (`src/fold.ts`). The fold is built but not yet tested against a real model.
-- **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped. There is no web page for the list in the MVP.
+- **The list:** lives in D1 and is the truth. Item numbers never move. Each tick records who, when and the words, with amounts stripped.
+- **The list page:** `GET /handup/l/<slug>` (`src/list-page.ts`) renders the list from D1 on every request, in the landing page's fresco look, with the two hands loaded from `build40for40.com/handup/`. The slug is 16 random hex characters made when the list is created, and the agent sees the full link as "List page" in "What you know". It shows item numbers, text, what's ticked and the helper's first name where the tick allows it. No name for the person, nothing they said, no phone number. It is never cached or indexed. An unknown or taken down slug, or a list deleted with `/forget`, gets a 404 page.
 - **No money, nothing private:** `src/guard.ts` strips amounts and refuses items with an amount, a phone number or an obvious address.
 - **Repeat safety:** adds and ticks are tied to the turn's first inbound message, so a retried turn can't apply them twice.
 - **Out:** a line with only `---PASTE---` splits the reply, so the message to paste arrives as its own chat bubble. Each bubble goes out through Twilio's Messages API, cut at a paragraph or line break if it passes 1,600 characters, with 3.1 seconds between sends so they arrive in order and stay inside the WhatsApp sandbox's limit.

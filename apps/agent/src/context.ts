@@ -46,11 +46,13 @@ export function whatYouKnow(input: {
   profile: string | null;
   notes: string;
   items: Item[];
+  listPage?: string;
 }): string {
   return [
     `Profile: ${input.profile?.trim() || "nothing yet"}`,
     `List started: ${ukLongDate(input.listStartedAt)}`,
     `Today's date: ${ukLongDate(input.now)}`,
+    ...(input.listPage ? [`List page: ${input.listPage}`] : []),
     "List:",
     renderListForModel(input.items),
     `Notes from earlier chats: ${input.notes.trim() || "none"}`,
