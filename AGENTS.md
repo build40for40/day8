@@ -39,3 +39,6 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 ## The agent
 
 The agent's aim, the user story and the draft system prompt are in `docs/agent-prompt.md`. The prompt names no tools yet, because the ADK is not chosen.
+
+- `docs/agent-needs.md`: what the agent needs from scaffolding (the block that goes in with every message, the actions she takes on the list, the shape of her reply).
+- `docs/test-script.md`: the fixed messages to send her and what a pass looks like.
