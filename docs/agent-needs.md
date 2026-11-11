@@ -63,13 +63,55 @@ If the paste part can't be its own bubble on day one, send it as one message wit
 - **Several messages sent close together** should arrive as one turn, each on its own line.
 - **She never messages first.** The prompt says so. If a nudge is ever added, the prompt changes with it.
 
-## 6. Still needs an answer
+## 6. The landing page's live chat
+
+The landing page at `build40for40.com/handup/` plays a scripted chat today. Samira wants the phone on that page to be the real chat, live. The front end for that exists (a Claude artifact built on Lawrence's page) and needs one thing from the Worker.
+
+**One endpoint:** `POST /handup/api/chat`
+
+```
+Request:   { "turns": [ { "role": "user" | "assistant", "content": "..." }, ... ] }
+Response:  { "text": "Handup's reply" }
+```
+
+- `turns` is the whole conversation so far, oldest first, ending on a user turn. The page keeps it, so the Worker stores nothing for these visitors.
+- **The system prompt stays on the server.** The Worker adds it, from the fenced block in `docs/agent-prompt.md`, plus the "What you know" block with an empty profile, the starter list and today's date. The page must never send the prompt, or the endpoint becomes a free Claude for anyone who finds it.
+- Add the paste marker instruction from section 4, so the page can draw the message to copy as its own bubble.
+- Streaming is welcome but not needed. If it streams, send plain text chunks and the page will show them as they arrive.
+
+**Guard rails, because this one is open to the public:**
+
+- A limit per visitor, such as 30 messages an hour by IP address.
+- A cap on length: refuse more than about 40 turns or 2,000 characters in one message.
+- A daily spending cap, after which it answers with a fixed "back tomorrow" line.
+- The Anthropic key as a Cloudflare secret, never in the repo.
+- Answer only requests from `build40for40.com` pages.
+
+**On the page:** the chat script looks for one function and uses it in place of Claude's built-in route.
+
+```js
+window.HANDUP_ASK = async (turns, { onText, signal }) => {
+  const res = await fetch("/handup/api/chat", {
+    method: "POST", signal,
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ turns }),
+  });
+  if (!res.ok) throw { code: res.status === 429 ? "rate_limited" : "upstream_error" };
+  const { text } = await res.json();
+  onText(text);
+  return text;
+};
+```
+
+Tell Samira when the endpoint answers and she will wire the page to it.
+
+## 7. Still needs an answer
 
 - **How someone deletes everything.** The prompt says "tell them how" and has nothing to tell. A `/forget` message handled by the scaffolding, as on Poppy, would do.
 - **One list per phone number?** The prompt assumes so.
 - **Can one item have two helpers,** such as two people each covering a week of childcare? The prompt assumes one tick per item.
 
-## 7. What changes in the prompt once this is wired
+## 8. What changes in the prompt once this is wired
 
 - The action names above go into the prompt, with "use them quietly".
 - The `---PASTE---` line, or its structured replacement, moves from the sandbox into the prompt.
