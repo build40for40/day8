@@ -34,3 +34,7 @@ Handup is a "laid-off wedding list": a list of in-kind support that someone who 
 **Open question: WhatsApp or iMessage.** WhatsApp can't post into existing groups, and nobody wants another Meta approval process. iMessage looks easier but is less documented.
 
 **Ruled out:** a money circle or community emergency fund (money is too hard), an identity mood board, an end-to-end job loss product, a WhatsApp job search agent, warm intros from a LinkedIn export, local support groups, a brag book, and finding fractional or consulting clients.
+
+## The agent
+
+The agent's aim, the user story and the draft system prompt are in `docs/agent-prompt.md`. The prompt names no tools yet, because the ADK is not chosen.
